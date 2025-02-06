@@ -1,16 +1,43 @@
-import Hero from "@/components/hero";
-import ConnectSupabaseSteps from "@/components/tutorial/connect-supabase-steps";
-import SignUpUserSteps from "@/components/tutorial/sign-up-user-steps";
-import { hasEnvVars } from "@/utils/supabase/check-env-vars";
+"use client"
 
-export default async function Home() {
+import { useState } from "react"
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
+import Calendar from "@/components/Calendar"
+import SidePanel from "@/components/SidePanel"
+import Auth from "@/components/Auth"
+import { AnimatePresence } from "framer-motion"
+import { useCalendarStore } from "@/store/calendarStore"
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { SessionContextProvider } from "@supabase/auth-helpers-react"
+import { ThemeProvider } from "next-themes"
+import { ThemeSwitcher } from "@/components/ThemeSwitcher"
+import { Toaster } from "react-hot-toast"
+
+const queryClient = new QueryClient()
+
+export default function Home() {
+  const { selectedDate } = useCalendarStore()
+  const [supabase] = useState(() => createClientComponentClient())
+
   return (
-    <>
-      <Hero />
-      <main className="flex-1 flex flex-col gap-6 px-4">
-        <h2 className="font-medium text-xl mb-4">Next steps</h2>
-        {hasEnvVars ? <SignUpUserSteps /> : <ConnectSupabaseSteps />}
-      </main>
-    </>
-  );
+    <SessionContextProvider supabaseClient={supabase}>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <main className="min-h-screen bg-background">
+            <div className="p-4 flex justify-between items-center">
+              <h1 className="text-2xl font-bold">Calendar App</h1>
+              <div className="flex items-center space-x-4">
+                <ThemeSwitcher />
+                <Auth />
+              </div>
+            </div>
+            <Calendar />
+            <AnimatePresence>{selectedDate && <SidePanel />}</AnimatePresence>
+            <Toaster />
+          </main>
+        </ThemeProvider>
+      </QueryClientProvider>
+    </SessionContextProvider>
+  )
 }
+
