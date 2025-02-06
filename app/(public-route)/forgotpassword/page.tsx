@@ -4,6 +4,7 @@ import { useState } from "react"
 import { useSupabaseClient } from "@supabase/auth-helpers-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import PublicRoute from "@/components/public/layout"
 
 export default function ForgotPassword() {
   const [loading, setLoading] = useState(false)
@@ -23,11 +24,13 @@ export default function ForgotPassword() {
   }
 
   return (
-    <form onSubmit={handleForgotPassword} className="space-y-4">
-      <Input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-      <Button type="submit" disabled={loading}>
-        {loading ? "Loading..." : "Reset Password"}
-      </Button>
-    </form>
+    <PublicRoute>
+      <form onSubmit={handleForgotPassword} className="space-y-4">
+        <Input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+        <Button type="submit" disabled={loading}>
+          {loading ? "Loading..." : "Reset Password"}
+        </Button>
+      </form>
+    </PublicRoute>
   )
 }
