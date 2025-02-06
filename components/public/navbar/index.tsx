@@ -12,24 +12,31 @@ import { SessionContextProvider, useUser } from "@supabase/auth-helpers-react"
 import { ThemeProvider } from "next-themes"
 import { ThemeSwitcher } from "@/components/ThemeSwitcher"
 import { Toaster } from "react-hot-toast"
-import PublicRoute from "@/components/public/layout"
-import HeroSection from "@/components/public/pages/landingpage/heroSection"
-import HowItWorks from "@/components/public/pages/landingpage/howitworks"
-import FeaturesSection from "@/components/public/pages/landingpage/features"
 
 const queryClient = new QueryClient()
 
-export default function Home() {
+export default function Navbar() {
   const { selectedDate } = useCalendarStore()
   const [supabase] = useState(() => createClientComponentClient())
   const user = useUser()
 
   return (
-   <PublicRoute>
-    <HeroSection/>
-    <HowItWorks/>
-    <FeaturesSection/>
-    </PublicRoute>
+    <SessionContextProvider supabaseClient={supabase}>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <main className="bg-background">
+            <div className="p-4 flex justify-between items-center">
+              <h1 className="text-2xl font-bold">Calendar App</h1>
+              <div className="flex items-center space-x-4">
+                <ThemeSwitcher />
+                <Auth />
+              </div>
+            </div>
+            <Toaster />
+          </main>
+        </ThemeProvider>
+      </QueryClientProvider>
+    </SessionContextProvider>
   )
 }
 
