@@ -12,6 +12,8 @@ import { SessionContextProvider, useUser } from "@supabase/auth-helpers-react"
 import { ThemeProvider } from "next-themes"
 import { ThemeSwitcher } from "@/components/ThemeSwitcher"
 import { Toaster } from "react-hot-toast"
+import Image from "next/image"
+import Logo from "@/public/assets/img/Logo.png"
 
 const queryClient = new QueryClient()
 
@@ -24,9 +26,9 @@ export default function Navbar() {
     <SessionContextProvider supabaseClient={supabase}>
       <QueryClientProvider client={queryClient}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <main className="bg-background">
+          <main className="bg-background px-44">
             <div className="p-4 flex justify-between items-center">
-              <h1 className="text-2xl font-bold">Calendar App</h1>
+              <Image src={Logo} alt="" height={50} width={60} />
               <div className="flex items-center space-x-4">
                 <ThemeSwitcher />
                 <Auth />
