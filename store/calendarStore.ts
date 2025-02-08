@@ -1,4 +1,4 @@
-import { create } from "zustand"
+import create from "zustand"
 
 export interface Event {
   id: string
@@ -7,6 +7,7 @@ export interface Event {
   condition: string
   date: string
   user_id: string
+  notify: boolean
 }
 
 type CalendarStore = {

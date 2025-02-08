@@ -8,13 +8,14 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { X, Edit, Trash, Mail } from "lucide-react"
+import { Switch } from "@/components/ui/switch"
+import { X, Edit, Trash, Mail, Bell } from "lucide-react"
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query"
-import { supabase } from "@/lib/supabase"
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 import { useSession } from "@supabase/auth-helpers-react"
-import { EventBadge } from "./EventBadge"
-import { toast } from "react-hot-toast"
-import { ConditionManager } from "./ConditionManager"
+import { EventBadge } from "@/components/EventBadge"
+import { useNotification } from "@/contexts/NotificationContext"
+import { ConditionManager } from "@/components/ConditionManager"
 
 interface Condition {
   id: string
@@ -27,11 +28,14 @@ export default function SidePanel() {
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
   const [condition, setCondition] = useState("")
+  const [notify, setNotify] = useState(false)
   const [editingEvent, setEditingEvent] = useState<Event | null>(null)
   const [recipientEmail, setRecipientEmail] = useState("")
   const [showConditionManager, setShowConditionManager] = useState(false)
   const queryClient = useQueryClient()
   const session = useSession()
+  const supabase = createClientComponentClient()
+  const { addNotification } = useNotification()
 
   const { data: events = [] } = useQuery<Event[]>({
     queryKey: ["events", session?.user?.id],
@@ -58,17 +62,24 @@ export default function SidePanel() {
       setTitle(editingEvent.title)
       setDescription(editingEvent.description)
       setCondition(editingEvent.condition)
+      setNotify(editingEvent.notify)
     } else {
       setTitle("")
       setDescription("")
       setCondition("")
+      setNotify(false)
     }
   }, [editingEvent])
 
   const addOrUpdateEventMutation = useMutation({
     mutationFn: async (newEvent: Omit<Event, "id" | "user_id"> & { id?: string }) => {
       if (newEvent.id) {
-        const { data, error } = await supabase.from("events").update(newEvent).eq("id", newEvent.id).single()
+        const { data, error } = await supabase
+          .from("events")
+          .update(newEvent)
+          .eq("id", newEvent.id)
+          .eq("user_id", session?.user?.id)
+          .single()
         if (error) throw error
         return data
       } else {
@@ -83,24 +94,24 @@ export default function SidePanel() {
     onSuccess: () => {
       queryClient.invalidateQueries(["events", session?.user?.id])
       setEditingEvent(null)
-      toast.success("Event saved successfully!")
+      addNotification("success", "Event saved successfully!")
     },
     onError: (error) => {
-      toast.error("Failed to save event: " + error.message)
+      addNotification("error", `Failed to save event: ${error.message}`)
     },
   })
 
   const deleteEventMutation = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from("events").delete().match({ id })
+      const { error } = await supabase.from("events").delete().match({ id, user_id: session?.user?.id })
       if (error) throw error
     },
     onSuccess: () => {
       queryClient.invalidateQueries(["events", session?.user?.id])
-      toast.success("Event deleted successfully!")
+      addNotification("success", "Event deleted successfully!")
     },
     onError: (error) => {
-      toast.error("Failed to delete event: " + error.message)
+      addNotification("error", `Failed to delete event: ${error.message}`)
     },
   })
 
@@ -119,10 +130,10 @@ export default function SidePanel() {
       return response.json()
     },
     onSuccess: () => {
-      toast.success("Notification sent successfully!")
+      addNotification("success", "Notification sent successfully!")
     },
     onError: (error) => {
-      toast.error("Failed to send notification: " + error.message)
+      addNotification("error", `Failed to send notification: ${error.message}`)
     },
   })
 
@@ -136,11 +147,13 @@ export default function SidePanel() {
         title,
         description,
         condition,
+        notify,
         date: selectedDate.toISOString(),
       })
       setTitle("")
       setDescription("")
       setCondition("")
+      setNotify(false)
     } catch (error) {
       console.error("Error adding/updating event:", error)
     }
@@ -169,7 +182,7 @@ export default function SidePanel() {
         console.error("Error sending notification:", error)
       }
     } else {
-      toast.error("Please enter a recipient email")
+      addNotification("warning", "Please enter a recipient email")
     }
   }
 
@@ -181,7 +194,7 @@ export default function SidePanel() {
       animate={{ x: 0 }}
       exit={{ x: "100%" }}
       transition={{ type: "spring", stiffness: 300, damping: 30 }}
-      className="fixed top-0 right-0 h-full w-80 bg-background shadow-lg p-4 overflow-y-auto"
+      className="fixed top-0 right-0 h-full w-full sm:w-80 bg-background shadow-lg p-4 overflow-y-auto"
     >
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-semibold">
@@ -223,6 +236,15 @@ export default function SidePanel() {
             ))}
           </SelectContent>
         </Select>
+        <div className="flex items-center space-x-2">
+          <Switch id="notify" checked={notify} onCheckedChange={setNotify} />
+          <label
+            htmlFor="notify"
+            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+          >
+            Notify me
+          </label>
+        </div>
         <Button type="button" onClick={() => setShowConditionManager(true)}>
           Manage Conditions
         </Button>
@@ -289,6 +311,10 @@ export default function SidePanel() {
                     </div>
                   </div>
                   <p className="text-sm">{event.description}</p>
+                  <div className="mt-2 flex items-center space-x-2">
+                    <Bell className={`h-4 w-4 ${event.notify ? "text-blue-500" : "text-gray-400"}`} />
+                    <span className="text-sm">{event.notify ? "Notifications enabled" : "Notifications disabled"}</span>
+                  </div>
                   <div className="mt-2">
                     <Input
                       placeholder="Recipient Email"

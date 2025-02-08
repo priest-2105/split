@@ -6,21 +6,23 @@ import { Button } from "@/components/ui/button"
 import { motion, AnimatePresence } from "framer-motion"
 import { useCalendarStore, type Event } from "@/store/calendarStore"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { supabase } from "@/lib/supabase"
-import { EventBadge } from "./EventBadge"
-import { useSession } from "@supabase/auth-helpers-react"
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
+import { EventBadge } from "@/components/EventBadge"
 import { DragDropContext, Droppable, Draggable, type DropResult } from "react-beautiful-dnd"
-import { toast } from "react-hot-toast"
+import { useNotification } from "@/contexts/NotificationContext"
+import { useSession } from "@supabase/auth-helpers-react"
 
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
 
 const MemoizedEventBadge = memo(EventBadge)
 
-export default memo(function Calendar() {
+const Calendar = () => {
   const [currentDate, setCurrentDate] = useState(new Date())
   const { selectedDate, setSelectedDate } = useCalendarStore()
-  const session = useSession()
   const queryClient = useQueryClient()
+  const supabase = createClientComponentClient()
+  const { addNotification } = useNotification()
+  const session = useSession()
 
   const {
     data: events = [],
@@ -42,37 +44,44 @@ export default memo(function Calendar() {
         .from("events")
         .update({ date: updatedEvent.date })
         .eq("id", updatedEvent.id)
+        .eq("user_id", session?.user?.id)
       if (error) throw error
       return data
     },
     onSuccess: () => {
       queryClient.invalidateQueries(["events", session?.user?.id])
+      addNotification("success", "Event updated successfully")
+    },
+    onError: (error) => {
+      addNotification("error", `Failed to update event: ${error.message}`)
     },
   })
 
   useEffect(() => {
-    if (!session?.user?.id) return
-
-    const subscription = supabase
+    const channel = supabase
       .channel("events")
-      .on("postgres_changes", { event: "*", schema: "public", table: "events" }, (payload) => {
-        console.log("Change received!", payload)
-        queryClient.invalidateQueries(["events", session?.user?.id])
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "events", filter: `user_id=eq.${session?.user?.id}` },
+        (payload) => {
+          console.log("Change received!", payload)
+          queryClient.invalidateQueries(["events", session?.user?.id])
 
-        if (payload.eventType === "UPDATE") {
-          toast.success("An event has been updated!")
-        } else if (payload.eventType === "INSERT") {
-          toast.success("A new event has been added!")
-        } else if (payload.eventType === "DELETE") {
-          toast.success("An event has been deleted!")
-        }
-      })
+          if (payload.eventType === "UPDATE") {
+            addNotification("success", "An event has been updated!")
+          } else if (payload.eventType === "INSERT") {
+            addNotification("success", "A new event has been added!")
+          } else if (payload.eventType === "DELETE") {
+            addNotification("success", "An event has been deleted!")
+          }
+        },
+      )
       .subscribe()
 
     return () => {
-      subscription.unsubscribe()
+      supabase.removeChannel(channel)
     }
-  }, [session?.user?.id, queryClient])
+  }, [queryClient, supabase, session?.user?.id, addNotification])
 
   const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1)
   const lastDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0)
@@ -197,7 +206,7 @@ export default memo(function Calendar() {
           </div>
         </motion.div>
         <motion.div
-          className="grid grid-cols-7 gap-1"
+          className="grid grid-cols-1 sm:grid-cols-7 gap-1"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.2 }}
@@ -205,7 +214,7 @@ export default memo(function Calendar() {
           aria-label="Calendar"
         >
           {DAYS.map((day) => (
-            <div key={day} className="text-center font-medium py-2" role="columnheader">
+            <div key={day} className="text-center font-medium py-2 hidden sm:block" role="columnheader">
               {day}
             </div>
           ))}
@@ -214,5 +223,7 @@ export default memo(function Calendar() {
       </div>
     </DragDropContext>
   )
-})
+}
+
+export default memo(Calendar)
 
