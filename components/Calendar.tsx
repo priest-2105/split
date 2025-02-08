@@ -6,11 +6,10 @@ import { Button } from "@/components/ui/button"
 import { motion, AnimatePresence } from "framer-motion"
 import { useCalendarStore, type Event } from "@/store/calendarStore"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
+import { createBrowserClient } from "@supabase/ssr"
 import { EventBadge } from "@/components/EventBadge"
 import { DragDropContext, Droppable, Draggable, type DropResult } from "react-beautiful-dnd"
 import { useNotification } from "@/contexts/NotificationContext"
-import { useSession } from "@supabase/auth-helpers-react"
 
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
 
@@ -20,22 +19,23 @@ const Calendar = () => {
   const [currentDate, setCurrentDate] = useState(new Date())
   const { selectedDate, setSelectedDate } = useCalendarStore()
   const queryClient = useQueryClient()
-  const supabase = createClientComponentClient()
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  )
   const { addNotification } = useNotification()
-  const session = useSession()
 
   const {
     data: events = [],
     isLoading,
     isError,
   } = useQuery<Event[]>({
-    queryKey: ["events", session?.user?.id],
+    queryKey: ["events"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("events").select("*").eq("user_id", session?.user?.id)
+      const { data, error } = await supabase.from("events").select("*")
       if (error) throw error
       return data
     },
-    enabled: !!session?.user?.id,
   })
 
   const updateEventMutation = useMutation({
@@ -44,12 +44,11 @@ const Calendar = () => {
         .from("events")
         .update({ date: updatedEvent.date })
         .eq("id", updatedEvent.id)
-        .eq("user_id", session?.user?.id)
       if (error) throw error
       return data
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["events", session?.user?.id])
+      queryClient.invalidateQueries(["events"])
       addNotification("success", "Event updated successfully")
     },
     onError: (error) => {
@@ -60,28 +59,24 @@ const Calendar = () => {
   useEffect(() => {
     const channel = supabase
       .channel("events")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "events", filter: `user_id=eq.${session?.user?.id}` },
-        (payload) => {
-          console.log("Change received!", payload)
-          queryClient.invalidateQueries(["events", session?.user?.id])
+      .on("postgres_changes", { event: "*", schema: "public", table: "events" }, (payload) => {
+        console.log("Change received!", payload)
+        queryClient.invalidateQueries(["events"])
 
-          if (payload.eventType === "UPDATE") {
-            addNotification("success", "An event has been updated!")
-          } else if (payload.eventType === "INSERT") {
-            addNotification("success", "A new event has been added!")
-          } else if (payload.eventType === "DELETE") {
-            addNotification("success", "An event has been deleted!")
-          }
-        },
-      )
+        if (payload.eventType === "UPDATE") {
+          addNotification("success", "An event has been updated!")
+        } else if (payload.eventType === "INSERT") {
+          addNotification("success", "A new event has been added!")
+        } else if (payload.eventType === "DELETE") {
+          addNotification("success", "An event has been deleted!")
+        }
+      })
       .subscribe()
 
     return () => {
       supabase.removeChannel(channel)
     }
-  }, [queryClient, supabase, session?.user?.id, addNotification])
+  }, [queryClient, supabase, addNotification])
 
   const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1)
   const lastDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0)

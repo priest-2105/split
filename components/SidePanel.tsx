@@ -11,8 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch"
 import { X, Edit, Trash, Mail, Bell } from "lucide-react"
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query"
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
-import { useSession } from "@supabase/auth-helpers-react"
+import { createBrowserClient } from "@supabase/ssr"
 import { EventBadge } from "@/components/EventBadge"
 import { useNotification } from "@/contexts/NotificationContext"
 import { ConditionManager } from "@/components/ConditionManager"
@@ -32,29 +31,44 @@ export default function SidePanel() {
   const [editingEvent, setEditingEvent] = useState<Event | null>(null)
   const [recipientEmail, setRecipientEmail] = useState("")
   const [showConditionManager, setShowConditionManager] = useState(false)
+  const [userId, setUserId] = useState<string | null>(null)
   const queryClient = useQueryClient()
-  const session = useSession()
-  const supabase = createClientComponentClient()
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  )
   const { addNotification } = useNotification()
 
+  useEffect(() => {
+    const fetchUserId = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+      setUserId(user?.id || null)
+    }
+    fetchUserId()
+  }, [supabase])
+
   const { data: events = [] } = useQuery<Event[]>({
-    queryKey: ["events", session?.user?.id],
+    queryKey: ["events", userId],
     queryFn: async () => {
-      const { data, error } = await supabase.from("events").select("*").eq("user_id", session?.user?.id)
+      if (!userId) return []
+      const { data, error } = await supabase.from("events").select("*").eq("user_id", userId)
       if (error) throw error
       return data
     },
-    enabled: !!session?.user?.id,
+    enabled: !!userId,
   })
 
   const { data: conditions = [] } = useQuery<Condition[]>({
-    queryKey: ["conditions", session?.user?.id],
+    queryKey: ["conditions", userId],
     queryFn: async () => {
-      const { data, error } = await supabase.from("conditions").select("*").eq("user_id", session?.user?.id)
+      if (!userId) return []
+      const { data, error } = await supabase.from("conditions").select("*").eq("user_id", userId)
       if (error) throw error
       return data
     },
-    enabled: !!session?.user?.id,
+    enabled: !!userId,
   })
 
   useEffect(() => {
@@ -73,26 +87,27 @@ export default function SidePanel() {
 
   const addOrUpdateEventMutation = useMutation({
     mutationFn: async (newEvent: Omit<Event, "id" | "user_id"> & { id?: string }) => {
+      if (!userId) throw new Error("User not authenticated")
       if (newEvent.id) {
         const { data, error } = await supabase
           .from("events")
           .update(newEvent)
           .eq("id", newEvent.id)
-          .eq("user_id", session?.user?.id)
+          .eq("user_id", userId)
           .single()
         if (error) throw error
         return data
       } else {
         const { data, error } = await supabase
           .from("events")
-          .insert({ ...newEvent, user_id: session?.user?.id })
+          .insert({ ...newEvent, user_id: userId })
           .single()
         if (error) throw error
         return data
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["events", session?.user?.id])
+      queryClient.invalidateQueries(["events", userId])
       setEditingEvent(null)
       addNotification("success", "Event saved successfully!")
     },
@@ -103,11 +118,12 @@ export default function SidePanel() {
 
   const deleteEventMutation = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from("events").delete().match({ id, user_id: session?.user?.id })
+      if (!userId) throw new Error("User not authenticated")
+      const { error } = await supabase.from("events").delete().match({ id, user_id: userId })
       if (error) throw error
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["events", session?.user?.id])
+      queryClient.invalidateQueries(["events", userId])
       addNotification("success", "Event deleted successfully!")
     },
     onError: (error) => {

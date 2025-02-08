@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation"
 import { motion } from "framer-motion"
 import { Home, Calendar, User, Settings, Menu, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { ThemeSwitcher } from "@/components/ui/ThemeSwitcher"
+import { ThemeSwitcher } from "@/components/ThemeSwitcher"
 
 const menuItems = [
   { icon: Home, label: "Home", href: "/dashboard" },

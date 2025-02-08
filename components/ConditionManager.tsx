@@ -1,10 +1,9 @@
 "use client"
 
 import type React from "react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { supabase } from "@/lib/supabase"
-import { useSession } from "@supabase/auth-helpers-react"
+import { createBrowserClient } from "@supabase/ssr"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { toast } from "react-hot-toast"
@@ -17,50 +16,67 @@ interface Condition {
 
 export function ConditionManager() {
   const [newCondition, setNewCondition] = useState("")
-  const session = useSession()
+  const [userId, setUserId] = useState<string | null>(null)
   const queryClient = useQueryClient()
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  )
+
+  useEffect(() => {
+    const fetchUserId = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+      setUserId(user?.id || null)
+    }
+    fetchUserId()
+  }, [supabase])
 
   const {
     data: conditions = [],
     isLoading,
     isError,
   } = useQuery<Condition[]>({
-    queryKey: ["conditions", session?.user?.id],
+    queryKey: ["conditions", userId],
     queryFn: async () => {
-      const { data, error } = await supabase.from("conditions").select("*").eq("user_id", session?.user?.id)
+      if (!userId) return []
+      const { data, error } = await supabase.from("conditions").select("*").eq("user_id", userId)
       if (error) throw error
       return data
     },
-    enabled: !!session?.user?.id,
+    enabled: !!userId,
   })
 
   const addConditionMutation = useMutation({
     mutationFn: async (name: string) => {
-      const { data, error } = await supabase.from("conditions").insert({ name, user_id: session?.user?.id }).single()
+      if (!userId) throw new Error("User not authenticated")
+      const { data, error } = await supabase.from("conditions").insert({ name, user_id: userId }).single()
       if (error) throw error
       return data
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["conditions", session?.user?.id])
+      queryClient.invalidateQueries(["conditions", userId])
       toast.success("Condition added successfully!")
       setNewCondition("")
     },
     onError: (error) => {
-      toast.error("Failed to add condition: " + error.message)
+      toast.error(`Failed to add condition: ${error.message}`)
     },
   })
 
   const deleteConditionMutation = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from("conditions").delete().match({ id })
+      if (!userId) throw new Error("User not authenticated")
+      const { error } = await supabase.from("conditions").delete().eq("id", id).eq("user_id", userId)
       if (error) throw error
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["conditions", session?.user?.id])
+      queryClient.invalidateQueries(["conditions", userId])
       toast.success("Condition deleted successfully!")
     },
     onError: (error) => {
-      toast.error("Failed to delete condition: " + error.message)
+      toast.error(`Failed to delete condition: ${error.message}`)
     },
   })
 
