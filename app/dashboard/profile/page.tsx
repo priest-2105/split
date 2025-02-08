@@ -1,11 +1,10 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { useSession } from "@supabase/auth-helpers-react"
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
+import { createBrowserClient } from "@supabase/ssr"
 import { useNotification } from "@/contexts/NotificationContext"
 
 export default function ProfilePage() {
@@ -14,9 +13,22 @@ export default function ProfilePage() {
   const [confirmPassword, setConfirmPassword] = useState("")
   const [isUpdatingUsername, setIsUpdatingUsername] = useState(false)
   const [isUpdatingPassword, setIsUpdatingPassword] = useState(false)
-  const session = useSession()
-  const supabase = createClientComponentClient()
+  const [userId, setUserId] = useState<string | null>(null)
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  )
   const { addNotification } = useNotification()
+
+  useEffect(() => {
+    const fetchUserId = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+      setUserId(user?.id || null)
+    }
+    fetchUserId()
+  }, [supabase])
 
   const handleUpdateUsername = async (e: React.FormEvent) => {
     e.preventDefault()

@@ -5,27 +5,33 @@ import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
 import { useTheme } from "next-themes"
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
-import { useSession } from "@supabase/auth-helpers-react"
+import { createBrowserClient } from "@supabase/ssr"
 import { useNotification } from "@/contexts/NotificationContext"
 import { subscribeToPushNotifications, unsubscribeFromPushNotifications } from "@/utils/pushNotifications"
 
 export default function SettingsPage() {
   const [pushNotifications, setPushNotifications] = useState(false)
   const [isTogglingNotifications, setIsTogglingNotifications] = useState(false)
+  const [userId, setUserId] = useState<string | null>(null)
   const { theme, setTheme } = useTheme()
-  const session = useSession()
-  const supabase = createClientComponentClient()
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  )
   const { addNotification } = useNotification()
 
   useEffect(() => {
-    if (session?.user?.id) {
-      // Fetch user preferences from the database
-      const fetchPreferences = async () => {
+    const fetchUserIdAndPreferences = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+      setUserId(user?.id || null)
+
+      if (user?.id) {
         const { data, error } = await supabase
           .from("user_preferences")
           .select("push_notifications")
-          .eq("user_id", session.user.id)
+          .eq("user_id", user.id)
           .single()
 
         if (error) {
@@ -34,10 +40,10 @@ export default function SettingsPage() {
           setPushNotifications(data.push_notifications)
         }
       }
-
-      fetchPreferences()
     }
-  }, [session, supabase])
+
+    fetchUserIdAndPreferences()
+  }, [supabase])
 
   const handleThemeChange = (newTheme: string) => {
     setTheme(newTheme)
@@ -64,10 +70,10 @@ export default function SettingsPage() {
 
       setPushNotifications(newValue)
 
-      if (session?.user?.id) {
+      if (userId) {
         const { error } = await supabase
           .from("user_preferences")
-          .upsert({ user_id: session.user.id, push_notifications: newValue })
+          .upsert({ user_id: userId, push_notifications: newValue })
 
         if (error) {
           addNotification("error", `Failed to update push notification preference: ${error.message}`)

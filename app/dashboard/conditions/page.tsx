@@ -1,12 +1,11 @@
 "use client"
 
-import { useState, type React } from "react"
+import { useState, useEffect, type React } from "react"
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
-import { useSession } from "@supabase/auth-helpers-react"
+import { createBrowserClient } from "@supabase/ssr"
 import { useNotification } from "@/contexts/NotificationContext"
 import { Plus, Edit, Trash } from "lucide-react"
 
@@ -20,29 +19,44 @@ export default function ConditionsPage() {
   const [newCondition, setNewCondition] = useState("")
   const [editingCondition, setEditingCondition] = useState<Condition | null>(null)
   const [searchTerm, setSearchTerm] = useState("")
+  const [userId, setUserId] = useState<string | null>(null)
   const queryClient = useQueryClient()
-  const session = useSession()
-  const supabase = createClientComponentClient()
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  )
   const { addNotification } = useNotification()
 
+  useEffect(() => {
+    const fetchUserId = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+      setUserId(user?.id || null)
+    }
+    fetchUserId()
+  }, [supabase])
+
   const { data: conditions = [], isLoading } = useQuery<Condition[]>({
-    queryKey: ["conditions", session?.user?.id],
+    queryKey: ["conditions", userId],
     queryFn: async () => {
-      const { data, error } = await supabase.from("conditions").select("*").eq("user_id", session?.user?.id)
+      if (!userId) return []
+      const { data, error } = await supabase.from("conditions").select("*").eq("user_id", userId)
       if (error) throw error
       return data
     },
-    enabled: !!session?.user?.id,
+    enabled: !!userId,
   })
 
   const addConditionMutation = useMutation({
     mutationFn: async (name: string) => {
-      const { data, error } = await supabase.from("conditions").insert({ name, user_id: session?.user?.id }).single()
+      if (!userId) throw new Error("User not authenticated")
+      const { data, error } = await supabase.from("conditions").insert({ name, user_id: userId }).single()
       if (error) throw error
       return data
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["conditions", session?.user?.id])
+      queryClient.invalidateQueries(["conditions", userId])
       addNotification("success", "Condition added successfully!")
       setNewCondition("")
     },
@@ -53,17 +67,18 @@ export default function ConditionsPage() {
 
   const updateConditionMutation = useMutation({
     mutationFn: async (condition: Condition) => {
+      if (!userId) throw new Error("User not authenticated")
       const { data, error } = await supabase
         .from("conditions")
         .update({ name: condition.name })
         .eq("id", condition.id)
-        .eq("user_id", session?.user?.id)
+        .eq("user_id", userId)
         .single()
       if (error) throw error
       return data
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["conditions", session?.user?.id])
+      queryClient.invalidateQueries(["conditions", userId])
       addNotification("success", "Condition updated successfully!")
       setEditingCondition(null)
     },
@@ -74,11 +89,12 @@ export default function ConditionsPage() {
 
   const deleteConditionMutation = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from("conditions").delete().eq("id", id).eq("user_id", session?.user?.id)
+      if (!userId) throw new Error("User not authenticated")
+      const { error } = await supabase.from("conditions").delete().eq("id", id).eq("user_id", userId)
       if (error) throw error
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["conditions", session?.user?.id])
+      queryClient.invalidateQueries(["conditions", userId])
       addNotification("success", "Condition deleted successfully!")
     },
     onError: (error) => {
