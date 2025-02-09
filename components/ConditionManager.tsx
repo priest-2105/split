@@ -25,24 +25,55 @@ export function ConditionManager() {
   const supabase = createClient()
 
   useEffect(() => {
-    const fetchUserId = async () => {
+    const checkAuth = async () => {
       const {
         data: { user },
+        error,
       } = await supabase.auth.getUser()
-      setUserId(user?.id || null)
+      if (user) {
+        setUserId(user.id)
+        console.log("Auth check: User authenticated", user)
+      } else {
+        console.log("Auth check: User not authenticated", error)
+      }
     }
-    fetchUserId()
+    checkAuth()
   }, [supabase])
+
+  useEffect(() => {
+    const testQuery = async () => {
+      try {
+        const { data, error } = await supabase.from("conditions").select("*")
+        if (error) {
+          console.error("Test query error:", error)
+        } else {
+          console.log("Test query result:", data)
+        }
+      } catch (error) {
+        console.error("Test query caught error:", error)
+      }
+    }
+    if (userId) {
+      testQuery()
+    }
+  }, [userId, supabase])
 
   const {
     data: conditions = [],
     isLoading,
     isError,
-  } = useQuery<Condition[]>({
+    error,
+  } = useQuery<Condition[], Error>({
     queryKey: ["conditions", userId],
     queryFn: () => fetchConditions(userId!),
     enabled: !!userId,
   })
+
+  useEffect(() => {
+    if (isError) {
+      console.error("Error fetching conditions:", error)
+    }
+  }, [isError, error])
 
   const addConditionMutation = useMutation({
     mutationFn: async (name: string) => {
@@ -57,7 +88,8 @@ export function ConditionManager() {
       setNewCondition("")
       setIsDialogOpen(false)
     },
-    onError: (error) => {
+    onError: (error: Error) => {
+      console.error("Error adding condition:", error)
       toast.error(`Failed to add condition: ${error.message}`)
     },
   })
@@ -72,7 +104,8 @@ export function ConditionManager() {
       queryClient.invalidateQueries(["conditions", userId])
       toast.success("Condition deleted successfully!")
     },
-    onError: (error) => {
+    onError: (error: Error) => {
+      console.error("Error deleting condition:", error)
       toast.error(`Failed to delete condition: ${error.message}`)
     },
   })
@@ -91,7 +124,7 @@ export function ConditionManager() {
   }
 
   if (isLoading) return <div>Loading conditions...</div>
-  if (isError) return <div>Error loading conditions</div>
+  if (isError) return <div>Error loading conditions: {error.message}</div>
 
   return (
     <div className="space-y-4">
