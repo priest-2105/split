@@ -1,6 +1,5 @@
 "use client"
 
-import type React from "react"
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useCalendarStore, type Event } from "@/store/calendarStore"
@@ -11,10 +10,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch"
 import { X, Edit, Trash, Mail, Bell } from "lucide-react"
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query"
-import { createBrowserClient } from "@supabase/ssr"
 import { EventBadge } from "@/components/EventBadge"
 import { useNotification } from "@/contexts/NotificationContext"
 import { ConditionManager } from "@/components/ConditionManager"
+import { createClient, fetchConditions } from "@/lib/supabase"
 
 interface Condition {
   id: string
@@ -33,10 +32,7 @@ export default function SidePanel() {
   const [showConditionManager, setShowConditionManager] = useState(false)
   const [userId, setUserId] = useState<string | null>(null)
   const queryClient = useQueryClient()
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-  )
+  const supabase = createClient()
   const { addNotification } = useNotification()
 
   useEffect(() => {
@@ -62,12 +58,7 @@ export default function SidePanel() {
 
   const { data: conditions = [] } = useQuery<Condition[]>({
     queryKey: ["conditions", userId],
-    queryFn: async () => {
-      if (!userId) return []
-      const { data, error } = await supabase.from("conditions").select("*").eq("user_id", userId)
-      if (error) throw error
-      return data
-    },
+    queryFn: () => fetchConditions(userId!),
     enabled: !!userId,
   })
 

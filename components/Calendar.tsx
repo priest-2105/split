@@ -6,10 +6,10 @@ import { Button } from "@/components/ui/button"
 import { motion, AnimatePresence } from "framer-motion"
 import { useCalendarStore, type Event } from "@/store/calendarStore"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { createBrowserClient } from "@supabase/ssr"
 import { EventBadge } from "@/components/EventBadge"
 import { DragDropContext, Droppable, Draggable, type DropResult } from "react-beautiful-dnd"
 import { useNotification } from "@/contexts/NotificationContext"
+import { createClient, fetchEvents } from "@/lib/supabase"
 
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
 
@@ -19,23 +19,28 @@ const Calendar = () => {
   const [currentDate, setCurrentDate] = useState(new Date())
   const { selectedDate, setSelectedDate } = useCalendarStore()
   const queryClient = useQueryClient()
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-  )
+  const supabase = createClient()
   const { addNotification } = useNotification()
+  const [userId, setUserId] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchUserId = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+      setUserId(user?.id || null)
+    }
+    fetchUserId()
+  }, [supabase])
 
   const {
     data: events = [],
     isLoading,
     isError,
   } = useQuery<Event[]>({
-    queryKey: ["events"],
-    queryFn: async () => {
-      const { data, error } = await supabase.from("events").select("*")
-      if (error) throw error
-      return data
-    },
+    queryKey: ["events", userId],
+    queryFn: () => fetchEvents(userId!),
+    enabled: !!userId,
   })
 
   const updateEventMutation = useMutation({
@@ -48,7 +53,7 @@ const Calendar = () => {
       return data
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["events"])
+      queryClient.invalidateQueries(["events", userId])
       addNotification("success", "Event updated successfully")
     },
     onError: (error) => {
@@ -61,7 +66,7 @@ const Calendar = () => {
       .channel("events")
       .on("postgres_changes", { event: "*", schema: "public", table: "events" }, (payload) => {
         console.log("Change received!", payload)
-        queryClient.invalidateQueries(["events"])
+        queryClient.invalidateQueries(["events", userId])
 
         if (payload.eventType === "UPDATE") {
           addNotification("success", "An event has been updated!")
@@ -76,7 +81,7 @@ const Calendar = () => {
     return () => {
       supabase.removeChannel(channel)
     }
-  }, [queryClient, supabase, addNotification])
+  }, [queryClient, supabase, addNotification, userId])
 
   const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1)
   const lastDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0)

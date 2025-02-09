@@ -1,12 +1,11 @@
 "use client"
 
-import type React from "react"
 import { useState, useEffect } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { createBrowserClient } from "@supabase/ssr"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { toast } from "react-hot-toast"
+import { createClient, fetchConditions } from "@/lib/supabase"
 
 interface Condition {
   id: string
@@ -18,10 +17,7 @@ export function ConditionManager() {
   const [newCondition, setNewCondition] = useState("")
   const [userId, setUserId] = useState<string | null>(null)
   const queryClient = useQueryClient()
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-  )
+  const supabase = createClient()
 
   useEffect(() => {
     const fetchUserId = async () => {
@@ -39,12 +35,7 @@ export function ConditionManager() {
     isError,
   } = useQuery<Condition[]>({
     queryKey: ["conditions", userId],
-    queryFn: async () => {
-      if (!userId) return []
-      const { data, error } = await supabase.from("conditions").select("*").eq("user_id", userId)
-      if (error) throw error
-      return data
-    },
+    queryFn: () => fetchConditions(userId!),
     enabled: !!userId,
   })
 
