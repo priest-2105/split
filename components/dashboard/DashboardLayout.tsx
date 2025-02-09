@@ -1,13 +1,15 @@
 "use client"
 
 import type React from "react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { motion } from "framer-motion"
-import { Home, Calendar, User, Settings, Menu, X } from "lucide-react"
+import { Home, Calendar, User, Settings, Menu, X, LogOut } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ThemeSwitcher } from "@/components/ThemeSwitcher"
+import { createBrowserClient } from "@supabase/ssr"
+import { useNotification } from "@/contexts/NotificationContext"
 
 const menuItems = [
   { icon: Home, label: "Home", href: "/dashboard" },
@@ -18,7 +20,39 @@ const menuItems = [
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+  const [userName, setUserName] = useState<string | null>(null)
   const pathname = usePathname()
+  const router = useRouter()
+  const { addNotification } = useNotification()
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  )
+
+  useEffect(() => {
+    const fetchUserName = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+      if (user) {
+        setUserName(user.email || user.user_metadata.username || "User")
+      }
+    }
+    fetchUserName()
+  }, [supabase])
+
+  const handleLogout = async () => {
+    try {
+      const { error } = await supabase.auth.signOut()
+      if (error) {
+        throw error
+      }
+      addNotification("success", "Logged out successfully")
+      router.push("/signin")
+    } catch (error) {
+      addNotification("error", `Failed to log out: ${error.message}`)
+    }
+  }
 
   return (
     <div className="flex h-screen bg-background">
@@ -39,6 +73,12 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
             </Link>
           ))}
         </nav>
+        <div className="mt-auto">
+          <Button variant="ghost" className="w-full justify-start" onClick={handleLogout}>
+            <LogOut className="h-5 w-5 mr-2" />
+            <span>Logout</span>
+          </Button>
+        </div>
       </aside>
 
       {/* Mobile sidebar */}
@@ -69,6 +109,12 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
             </Link>
           ))}
         </nav>
+        <div className="mt-auto">
+          <Button variant="ghost" className="w-full justify-start" onClick={handleLogout}>
+            <LogOut className="h-5 w-5 mr-2" />
+            <span>Logout</span>
+          </Button>
+        </div>
       </motion.nav>
 
       {isSidebarOpen && (
@@ -82,7 +128,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
           </Button>
           <div className="flex items-center space-x-4">
             <ThemeSwitcher />
-            <span>User Name</span>
+            <span>{userName}</span>
           </div>
         </header>
         <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 dark:bg-gray-900 p-6">{children}</main>

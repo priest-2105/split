@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
@@ -14,6 +15,7 @@ export default function SettingsPage() {
   const [isTogglingNotifications, setIsTogglingNotifications] = useState(false)
   const [userId, setUserId] = useState<string | null>(null)
   const { theme, setTheme } = useTheme()
+  const router = useRouter()
   const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -88,6 +90,19 @@ export default function SettingsPage() {
     }
   }
 
+  const handleLogout = async () => {
+    try {
+      const { error } = await supabase.auth.signOut()
+      if (error) {
+        throw error
+      }
+      addNotification("success", "Logged out successfully")
+      router.push("/signin")
+    } catch (error) {
+      addNotification("error", `Failed to log out: ${error.message}`)
+    }
+  }
+
   return (
     <DashboardLayout>
       <h1 className="text-2xl font-bold mb-4">Settings</h1>
@@ -116,6 +131,12 @@ export default function SettingsPage() {
             />
             <span>{isTogglingNotifications ? "Updating..." : pushNotifications ? "Enabled" : "Disabled"}</span>
           </div>
+        </div>
+        <div>
+          <h2 className="text-xl font-semibold mb-2">Account</h2>
+          <Button onClick={handleLogout} variant="destructive">
+            Logout
+          </Button>
         </div>
       </div>
     </DashboardLayout>
