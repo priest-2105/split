@@ -5,14 +5,16 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { toast } from "react-hot-toast"
 import { createClient, fetchConditions } from "@/lib/supabase"
-import { Plus } from "lucide-react"
+import { Plus, Trash } from "lucide-react"
 
 interface Condition {
   id: string
   name: string
   user_id: string
+  created_at: string
 }
 
 export function ConditionManager() {
@@ -119,21 +121,33 @@ export function ConditionManager() {
           </DialogContent>
         </Dialog>
       </div>
-      <ul className="space-y-2">
-        {conditions.map((condition) => (
-          <li key={condition.id} className="flex justify-between items-center">
-            <span>{condition.name}</span>
-            <Button
-              variant="destructive"
-              size="sm"
-              onClick={() => handleDeleteCondition(condition.id)}
-              disabled={deleteConditionMutation.isLoading}
-            >
-              Delete
-            </Button>
-          </li>
-        ))}
-      </ul>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Name</TableHead>
+            <TableHead>Created At</TableHead>
+            <TableHead>Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {conditions.map((condition) => (
+            <TableRow key={condition.id}>
+              <TableCell>{condition.name}</TableCell>
+              <TableCell>{new Date(condition.created_at).toLocaleString()}</TableCell>
+              <TableCell>
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={() => handleDeleteCondition(condition.id)}
+                  disabled={deleteConditionMutation.isLoading}
+                >
+                  <Trash className="h-4 w-4" />
+                </Button>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
     </div>
   )
 }

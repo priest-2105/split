@@ -18,7 +18,11 @@ export async function fetchEvents(userId: string) {
 
 export async function fetchConditions(userId: string) {
   const supabase = createClient()
-  const { data, error } = await supabase.from("conditions").select("*").eq("user_id", userId)
+  const { data, error } = await supabase
+    .from("conditions")
+    .select("id, name, user_id, created_at")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false })
 
   if (error) {
     console.error("Error fetching conditions:", error)
