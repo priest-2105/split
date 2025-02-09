@@ -4,8 +4,10 @@ import { useState, useEffect } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { toast } from "react-hot-toast"
 import { createClient, fetchConditions } from "@/lib/supabase"
+import { Plus } from "lucide-react"
 
 interface Condition {
   id: string
@@ -16,6 +18,7 @@ interface Condition {
 export function ConditionManager() {
   const [newCondition, setNewCondition] = useState("")
   const [userId, setUserId] = useState<string | null>(null)
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
   const queryClient = useQueryClient()
   const supabase = createClient()
 
@@ -50,6 +53,7 @@ export function ConditionManager() {
       queryClient.invalidateQueries(["conditions", userId])
       toast.success("Condition added successfully!")
       setNewCondition("")
+      setIsDialogOpen(false)
     },
     onError: (error) => {
       toast.error(`Failed to add condition: ${error.message}`)
@@ -89,19 +93,32 @@ export function ConditionManager() {
 
   return (
     <div className="space-y-4">
-      <h2 className="text-xl font-semibold">Manage Conditions</h2>
-      <form onSubmit={handleAddCondition} className="flex space-x-2">
-        <Input
-          type="text"
-          value={newCondition}
-          onChange={(e) => setNewCondition(e.target.value)}
-          placeholder="New condition"
-          className="flex-grow"
-        />
-        <Button type="submit" disabled={addConditionMutation.isLoading}>
-          {addConditionMutation.isLoading ? "Adding..." : "Add"}
-        </Button>
-      </form>
+      <div className="flex justify-between items-center">
+        <h2 className="text-xl font-semibold">Manage Conditions</h2>
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogTrigger asChild>
+            <Button>
+              <Plus className="mr-2 h-4 w-4" /> Add Condition
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Add New Condition</DialogTitle>
+            </DialogHeader>
+            <form onSubmit={handleAddCondition} className="space-y-4">
+              <Input
+                type="text"
+                value={newCondition}
+                onChange={(e) => setNewCondition(e.target.value)}
+                placeholder="New condition"
+              />
+              <Button type="submit" disabled={addConditionMutation.isLoading}>
+                {addConditionMutation.isLoading ? "Adding..." : "Add Condition"}
+              </Button>
+            </form>
+          </DialogContent>
+        </Dialog>
+      </div>
       <ul className="space-y-2">
         {conditions.map((condition) => (
           <li key={condition.id} className="flex justify-between items-center">

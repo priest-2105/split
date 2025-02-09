@@ -56,7 +56,7 @@ export default function SidePanel() {
     enabled: !!userId,
   })
 
-  const { data: conditions = [] } = useQuery<Condition[]>({
+  const { data: conditions = [], isLoading: isLoadingConditions } = useQuery<Condition[]>({
     queryKey: ["conditions", userId],
     queryFn: () => fetchConditions(userId!),
     enabled: !!userId,
@@ -236,11 +236,17 @@ export default function SidePanel() {
             <SelectValue placeholder="Select condition" />
           </SelectTrigger>
           <SelectContent>
-            {conditions.map((cond) => (
-              <SelectItem key={cond.id} value={cond.name}>
-                {cond.name}
+            {isLoadingConditions ? (
+              <SelectItem value="" disabled>
+                Loading conditions...
               </SelectItem>
-            ))}
+            ) : (
+              conditions.map((cond) => (
+                <SelectItem key={cond.id} value={cond.name}>
+                  {cond.name}
+                </SelectItem>
+              ))
+            )}
           </SelectContent>
         </Select>
         <div className="flex items-center space-x-2">
