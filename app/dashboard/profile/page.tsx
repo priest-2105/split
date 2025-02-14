@@ -8,8 +8,10 @@ import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { createBrowserClient } from "@supabase/ssr"
+import { createBrowserClient } from "@supabase/ssr" 
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 import { useNotification } from "@/contexts/NotificationContext"
+
 
 export default function ProfilePage() {
   const [username, setUsername] = useState("")
@@ -72,6 +74,7 @@ export default function ProfilePage() {
     }
   }
 
+  
   const handleDeleteAccount = async () => {
     if (deleteConfirmation !== "DELETE") {
       addNotification("error", "Please type DELETE to confirm account deletion")
@@ -79,8 +82,15 @@ export default function ProfilePage() {
     }
     setIsDeletingAccount(true)
     try {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession()
+      if (!session) throw new Error("No active session")
+
       const { error } = await supabase.functions.invoke("delete-account", {
-        body: { user_id: userId },
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
       })
       if (error) throw error
       addNotification("success", "Account deleted successfully")
