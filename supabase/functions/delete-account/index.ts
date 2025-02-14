@@ -1,6 +1,6 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
+import { serve } from "https://deno.land/std@0.177.0/http/server.ts"
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2"
-import { Deno } from "https://deno.land/std@0.168.0/deno.ts"
+import { Deno } from "https://deno.land/std@0.177.0/node/process.ts"
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -15,7 +15,25 @@ serve(async (req) => {
   try {
     const supabase = createClient(Deno.env.get("SUPABASE_URL") ?? "", Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "")
 
-    const { user_id } = await req.json()
+    // Get the JWT token from the request headers
+    const authHeader = req.headers.get("Authorization")
+    if (!authHeader) {
+      throw new Error("Missing Authorization header")
+    }
+
+    const token = authHeader.replace("Bearer ", "")
+
+    // Verify the JWT token
+    const {
+      data: { user },
+      error: jwtError,
+    } = await supabase.auth.getUser(token)
+
+    if (jwtError || !user) {
+      throw new Error("Invalid token")
+    }
+
+    const user_id = user.id
 
     // Delete user's conditions
     const { error: conditionsError } = await supabase.from("conditions").delete().eq("user_id", user_id)
