@@ -1,5 +1,7 @@
 "use client"
 
+import type React from "react"
+
 import { useState, useEffect } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { Button } from "@/components/ui/button"
@@ -31,32 +33,14 @@ export function ConditionManager() {
         error,
       } = await supabase.auth.getUser()
       if (user) {
-        setUserId(user.id)
         console.log("Auth check: User authenticated", user)
+        setUserId(user.id)
       } else {
-        console.log("Auth check: User not authenticated", error)
+        console.error("Auth check: User not authenticated", error)
       }
     }
     checkAuth()
-  }, [supabase])
-
-  useEffect(() => {
-    const testQuery = async () => {
-      try {
-        const { data, error } = await supabase.from("conditions").select("*")
-        if (error) {
-          console.error("Test query error:", error)
-        } else {
-          console.log("Test query result:", data)
-        }
-      } catch (error) {
-        console.error("Test query caught error:", error)
-      }
-    }
-    if (userId) {
-      testQuery()
-    }
-  }, [userId, supabase])
+  }, [supabase.auth.getUser]) // Added supabase.auth.getUser as a dependency
 
   const {
     data: conditions = [],
@@ -78,11 +62,17 @@ export function ConditionManager() {
   const addConditionMutation = useMutation({
     mutationFn: async (name: string) => {
       if (!userId) throw new Error("User not authenticated")
+      console.log("Adding condition:", name, "for user:", userId)
       const { data, error } = await supabase.from("conditions").insert({ name, user_id: userId }).single()
-      if (error) throw error
+      if (error) {
+        console.error("Error adding condition:", error)
+        throw error
+      }
+      console.log("Added condition:", data)
       return data
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log("Condition added successfully:", data)
       queryClient.invalidateQueries(["conditions", userId])
       toast.success("Condition added successfully!")
       setNewCondition("")
