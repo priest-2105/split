@@ -1,9 +1,13 @@
 "use client"
 
+import type React from "react"
+
 import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { createBrowserClient } from "@supabase/ssr"
 import { useNotification } from "@/contexts/NotificationContext"
 
@@ -13,7 +17,11 @@ export default function ProfilePage() {
   const [confirmPassword, setConfirmPassword] = useState("")
   const [isUpdatingUsername, setIsUpdatingUsername] = useState(false)
   const [isUpdatingPassword, setIsUpdatingPassword] = useState(false)
+  const [isDeletingAccount, setIsDeletingAccount] = useState(false)
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
+  const [deleteConfirmation, setDeleteConfirmation] = useState("")
   const [userId, setUserId] = useState<string | null>(null)
+  const router = useRouter()
   const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -64,6 +72,28 @@ export default function ProfilePage() {
     }
   }
 
+  const handleDeleteAccount = async () => {
+    if (deleteConfirmation !== "DELETE") {
+      addNotification("error", "Please type DELETE to confirm account deletion")
+      return
+    }
+    setIsDeletingAccount(true)
+    try {
+      const { error } = await supabase.functions.invoke("delete-account", {
+        body: { user_id: userId },
+      })
+      if (error) throw error
+      addNotification("success", "Account deleted successfully")
+      await supabase.auth.signOut()
+      router.push("/")
+    } catch (error) {
+      addNotification("error", `Failed to delete account: ${error.message}`)
+    } finally {
+      setIsDeletingAccount(false)
+      setIsDeleteDialogOpen(false)
+    }
+  }
+
   return (
     <DashboardLayout>
       <h1 className="text-2xl font-bold mb-4">Profile</h1>
@@ -101,6 +131,37 @@ export default function ProfilePage() {
             {isUpdatingPassword ? "Updating..." : "Change Password"}
           </Button>
         </form>
+        <div className="space-y-4">
+          <h2 className="text-xl font-semibold">Delete Account</h2>
+          <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+            <DialogTrigger asChild>
+              <Button variant="destructive">Delete Account</Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Are you sure you want to delete your account?</DialogTitle>
+              </DialogHeader>
+              <p className="text-sm text-gray-500">
+                This action cannot be undone. All your data will be permanently deleted.
+              </p>
+              <Input
+                type="text"
+                placeholder="Type DELETE to confirm"
+                value={deleteConfirmation}
+                onChange={(e) => setDeleteConfirmation(e.target.value)}
+                className="w-full mt-4"
+              />
+              <Button
+                variant="destructive"
+                onClick={handleDeleteAccount}
+                disabled={isDeletingAccount || deleteConfirmation !== "DELETE"}
+                className="w-full mt-4"
+              >
+                {isDeletingAccount ? "Deleting..." : "Confirm Delete"}
+              </Button>
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
     </DashboardLayout>
   )
