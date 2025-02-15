@@ -10,6 +10,7 @@ import { EventBadge } from "@/components/EventBadge"
 import { DragDropContext, Droppable, Draggable, type DropResult } from "react-beautiful-dnd"
 import { useNotification } from "@/contexts/NotificationContext"
 import { createClient, fetchEvents } from "@/lib/supabase"
+import { useRouter } from "next/navigation"
 
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
 
@@ -22,6 +23,7 @@ const Calendar = () => {
   const supabase = createClient()
   const { addNotification } = useNotification()
   const [userId, setUserId] = useState<string | null>(null)
+  const router = useRouter()
 
   useEffect(() => {
     const fetchUserId = async () => {
@@ -98,7 +100,7 @@ const Calendar = () => {
 
   const handleDateClick = (day: number) => {
     const clickedDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), day)
-    setSelectedDate(clickedDate)
+    router.push(`/dashboard/day/${clickedDate.toISOString().split("T")[0]}`)
   }
 
   const onDragEnd = (result: DropResult) => {
