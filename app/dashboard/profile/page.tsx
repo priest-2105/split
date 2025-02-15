@@ -8,9 +8,10 @@ import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { createBrowserClient } from "@supabase/ssr" 
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
+import { createBrowserClient } from "@supabase/ssr"  
+// import { createClientComponentClient } from "@supabase/ssr"
 import { useNotification } from "@/contexts/NotificationContext"
+import { createClient } from "@supabase/supabase-js"
 
 
 export default function ProfilePage() {

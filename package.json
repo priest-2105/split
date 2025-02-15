@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@radix-ui/react-checkbox": "^1.0.4",
+    "@radix-ui/react-dialog": "^1.1.6",
     "@radix-ui/react-dropdown-menu": "^2.0.6",
     "@radix-ui/react-label": "^2.0.2",
     "@radix-ui/react-select": "^2.0.0",
@@ -40,7 +41,6 @@
     "@types/react-dom": "^18.2.18",
     "nodemon": "^3.0.3",
     "postcss": "^8.4.33",
-    "supabase": "^2.12.1",
     "tailwind-merge": "^2.2.1",
     "tailwindcss": "^3.4.1",
     "tailwindcss-animate": "^1.0.7",
