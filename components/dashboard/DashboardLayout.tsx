@@ -1,22 +1,23 @@
 "use client"
 
 import type React from "react"
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { motion } from "framer-motion"
 import { Home, Calendar, User, Settings, Menu, X, LogOut } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { ThemeSwitcher } from "@/components/ThemeSwitcher"
+import { ThemeSwitcher } from "@/components/ui/ThemeSwitcher"
 import { createBrowserClient } from "@supabase/ssr"
 import { useNotification } from "@/contexts/NotificationContext"
+import { useQuery } from "@tanstack/react-query"
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogFooter,
 } from "@/components/ui/dialog"
 
 const menuItems = [
@@ -28,7 +29,6 @@ const menuItems = [
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
-  const [userName, setUserName] = useState<string | null>(null)
   const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false)
   const pathname = usePathname()
   const router = useRouter()
@@ -38,17 +38,17 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
   )
 
-  useEffect(() => {
-    const fetchUserName = async () => {
+  const { data: userData, isLoading: isUserLoading } = useQuery({
+    queryKey: ["user"],
+    queryFn: async () => {
       const {
         data: { user },
       } = await supabase.auth.getUser()
-      if (user) {
-        setUserName(user.user_metadata.username || user.email?.split("@")[0] || "User")
-      }
-    }
-    fetchUserName()
-  }, [supabase])
+      return user
+    },
+  })
+
+  const userName = userData?.user_metadata?.username || userData?.email?.split("@")[0] || "User"
 
   const openLogoutDialog = () => {
     setIsLogoutDialogOpen(true)
@@ -93,7 +93,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
     <div className="flex h-screen bg-background">
       {/* Sidebar for desktop */}
       <aside className="hidden lg:flex flex-col w-64 bg-gray-800 text-white p-4">
-        <h1 className="text-2xl font-bold mb-8">Split</h1>
+        <h1 className="text-2xl font-bold mb-8">SaaSCal</h1>
         <nav className="space-y-2">
           {menuItems.map((item) => (
             <Link
@@ -124,7 +124,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         className="lg:hidden fixed left-0 top-0 bottom-0 w-64 bg-gray-800 text-white p-4 z-50"
       >
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-2xl font-bold">Split</h1>
+          <h1 className="text-2xl font-bold">SaaSCal</h1>
           <Button variant="ghost" size="icon" onClick={() => setIsSidebarOpen(false)}>
             <X className="h-6 w-6" />
           </Button>
@@ -163,7 +163,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
           </Button>
           <div className="flex items-center space-x-4">
             <ThemeSwitcher />
-            <span className="font-semibold">{userName}</span>
+            <span className="font-semibold">{isUserLoading ? "Loading..." : userName}</span>
           </div>
         </header>
         <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 dark:bg-gray-900 p-6">{children}</main>
