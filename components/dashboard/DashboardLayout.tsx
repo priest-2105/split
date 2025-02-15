@@ -10,6 +10,14 @@ import { Button } from "@/components/ui/button"
 import { ThemeSwitcher } from "@/components/ThemeSwitcher"
 import { createBrowserClient } from "@supabase/ssr"
 import { useNotification } from "@/contexts/NotificationContext"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 
 const menuItems = [
   { icon: Home, label: "Home", href: "/dashboard" },
@@ -21,6 +29,7 @@ const menuItems = [
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const [userName, setUserName] = useState<string | null>(null)
+  const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false)
   const pathname = usePathname()
   const router = useRouter()
   const { addNotification } = useNotification()
@@ -35,13 +44,18 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         data: { user },
       } = await supabase.auth.getUser()
       if (user) {
-        setUserName(user.email || user.user_metadata.username || "User")
+        setUserName(user.user_metadata.username || user.email?.split("@")[0] || "User")
       }
     }
     fetchUserName()
   }, [supabase])
 
+  const openLogoutDialog = () => {
+    setIsLogoutDialogOpen(true)
+  }
+
   const handleLogout = async () => {
+    setIsLogoutDialogOpen(false)
     try {
       const { error } = await supabase.auth.signOut()
       if (error) {
@@ -54,11 +68,32 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
     }
   }
 
+  const LogoutConfirmationDialog = () => (
+    <Dialog open={isLogoutDialogOpen} onOpenChange={setIsLogoutDialogOpen}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Confirm Logout</DialogTitle>
+          <DialogDescription>
+            Are you sure you want to log out? You will need to sign in again to access your account.
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter>
+          <Button variant="outline" onClick={() => setIsLogoutDialogOpen(false)}>
+            Cancel
+          </Button>
+          <Button variant="destructive" onClick={handleLogout}>
+            Logout
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  )
+
   return (
     <div className="flex h-screen bg-background">
       {/* Sidebar for desktop */}
       <aside className="hidden lg:flex flex-col w-64 bg-gray-800 text-white p-4">
-        <h1 className="text-2xl font-bold mb-8">SaaSCal</h1>
+        <h1 className="text-2xl font-bold mb-8">Split</h1>
         <nav className="space-y-2">
           {menuItems.map((item) => (
             <Link
@@ -74,7 +109,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
           ))}
         </nav>
         <div className="mt-auto">
-          <Button variant="ghost" className="w-full justify-start" onClick={handleLogout}>
+          <Button variant="ghost" className="w-full justify-start" onClick={openLogoutDialog}>
             <LogOut className="h-5 w-5 mr-2" />
             <span>Logout</span>
           </Button>
@@ -89,7 +124,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         className="lg:hidden fixed left-0 top-0 bottom-0 w-64 bg-gray-800 text-white p-4 z-50"
       >
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-2xl font-bold">SaaSCal</h1>
+          <h1 className="text-2xl font-bold">Split</h1>
           <Button variant="ghost" size="icon" onClick={() => setIsSidebarOpen(false)}>
             <X className="h-6 w-6" />
           </Button>
@@ -110,7 +145,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
           ))}
         </nav>
         <div className="mt-auto">
-          <Button variant="ghost" className="w-full justify-start" onClick={handleLogout}>
+          <Button variant="ghost" className="w-full justify-start" onClick={openLogoutDialog}>
             <LogOut className="h-5 w-5 mr-2" />
             <span>Logout</span>
           </Button>
@@ -128,10 +163,11 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
           </Button>
           <div className="flex items-center space-x-4">
             <ThemeSwitcher />
-            <span>{userName}</span>
+            <span className="font-semibold">{userName}</span>
           </div>
         </header>
         <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 dark:bg-gray-900 p-6">{children}</main>
+        <LogoutConfirmationDialog />
       </div>
     </div>
   )
