@@ -88,7 +88,7 @@ export default function Home() {
 
   return (
     <div ref={targetRef} className="min-h-screen bg-transparent text-white overflow-hidden select-none">
-      <Preloader />
+      {/* <Preloader /> */}
       <motion.div className="fixed inset-0 z-0">
         <div className="absolute inset-0 bg-black" />
         <motion.div
