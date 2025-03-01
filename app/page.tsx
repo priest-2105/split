@@ -94,7 +94,6 @@ export default function Home() {
         <motion.div
           className="absolute inset-0"
           style={{
-            "@keyframes blink": blink,
             backgroundImage: `
               linear-gradient(to right, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
               linear-gradient(to bottom, rgba(255, 255, 255, 0.1) 1px, transparent 1px)

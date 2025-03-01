@@ -16,4 +16,3 @@ export function useCountUp(end: number, duration = 2) {
 
   return value
 }
-
