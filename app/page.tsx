@@ -18,7 +18,7 @@ import {
 import { useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { Footer } from "@/components/layout/Footer"
-import { Preloader } from "@/components/preloader"
+import { Preloader } from "@/components/public/preloader/index"
 
 const blink = {
   "0%, 100%": { opacity: 1 },
