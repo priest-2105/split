@@ -93,7 +93,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
     <div className="flex h-screen bg-background">
       {/* Sidebar for desktop */}
       <aside className="hidden lg:flex flex-col w-64 bg-gray-800 text-white p-4">
-        <h1 className="text-2xl font-bold mb-8">SaaSCal</h1>
+        <h1 className="text-2xl font-bold mb-8">Split</h1>
         <nav className="space-y-2">
           {menuItems.map((item) => (
             <Link
@@ -124,7 +124,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         className="lg:hidden fixed left-0 top-0 bottom-0 w-64 bg-gray-800 text-white p-4 z-50"
       >
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-2xl font-bold">SaaSCal</h1>
+          <h1 className="text-2xl font-bold">Split</h1>
           <Button variant="ghost" size="icon" onClick={() => setIsSidebarOpen(false)}>
             <X className="h-6 w-6" />
           </Button>
