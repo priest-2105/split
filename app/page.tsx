@@ -131,7 +131,7 @@ export default function Home() {
               variants={itemVariants}
               className="text-base sm:text-lg lg:text-xl text-gray-400 max-w-2xl mx-auto px-4"
             >
-              Най- бързият и ефективен начин да стартираш, тестваш и валидираш бизнес идеята си с помощта на AI
+              The fastest and most efficient way to launch, test, and validate your business idea with the help of AI
             </motion.p>
             <motion.div variants={itemVariants} className="flex flex-col sm:flex-row gap-4 justify-center px-4">
               <Button
@@ -175,7 +175,7 @@ export default function Home() {
                 viewport={{ once: true }}
                 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4"
               >
-                Нашето Влияние в Цифри
+                Our Impact in Numbers
               </motion.h2>
               <motion.p
                 initial={{ opacity: 0, y: 20 }}
@@ -184,7 +184,7 @@ export default function Home() {
                 viewport={{ once: true }}
                 className="text-gray-400 max-w-2xl mx-auto text-sm sm:text-base"
               >
-                Вижте как трансформираме бизнеси по целия свят
+                See how we are transforming businesses around the world
               </motion.p>
             </div>
             <div className="grid grid-cols-3 gap-6">
@@ -197,7 +197,7 @@ export default function Home() {
               >
                 <Users2 className="w-8 h-8 sm:w-12 sm:h-12 text-gray-400 mb-4 mx-auto" />
                 <div className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2">{projectsCount.toLocaleString()}</div>
-                <p className="text-gray-400 text-sm sm:text-base">Активни Потребители</p>
+                <p className="text-gray-400 text-sm sm:text-base">Active Users</p>
               </motion.div>
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -210,7 +210,7 @@ export default function Home() {
                 <div className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2">
                   {deploymentCount.toLocaleString()}
                 </div>
-                <p className="text-gray-400 text-sm sm:text-base">Създадени Бизнеси</p>
+                <p className="text-gray-400 text-sm sm:text-base">Businesses Created</p>
               </motion.div>
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -223,7 +223,7 @@ export default function Home() {
                 <div className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2">
                   ${(securityCount * 100000).toLocaleString()}
                 </div>
-                <p className="text-gray-400 text-sm sm:text-base">Генериран Приход</p>
+                <p className="text-gray-400 text-sm sm:text-base">Revenue Generated</p>
               </motion.div>
             </div>
           </motion.div>
@@ -239,10 +239,10 @@ export default function Home() {
           >
             <div className="text-center mb-12">
               <motion.h2 variants={itemVariants} className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 px-4">
-                Мощни функции за вашия бизнес
+                Powerful Features for Your Business
               </motion.h2>
               <motion.p variants={itemVariants} className="text-gray-400 max-w-2xl mx-auto text-sm sm:text-base px-4">
-                Всичко необходимо за разрастване на бизнеса ви и удовлетворяване на клиентите ви
+                Everything you need to grow your business and satisfy your customers
               </motion.p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
@@ -273,10 +273,10 @@ export default function Home() {
           >
             <div className="text-center mb-12">
               <motion.h2 variants={itemVariants} className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4">
-                Просто и прозрачно ценообразуване
+                Simple and Transparent Pricing
               </motion.h2>
               <motion.p variants={itemVariants} className="text-gray-400 max-w-2xl mx-auto text-sm sm:text-base">
-                Изберете идеалния план за вашите нужди. Винаги знайте какво ще платите.
+                Choose the perfect plan for your needs. Always know what you'll pay.
               </motion.p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
@@ -284,8 +284,8 @@ export default function Home() {
               <motion.div variants={itemVariants}>
                 <Card className="relative p-4 sm:p-6 bg-transparent backdrop-blur-2xl border-gray-500 text-white h-full">
                   <CardHeader>
-                    <CardTitle className="text-xl sm:text-2xl font-bold">Безплатен</CardTitle>
-                    <p className="text-gray-400 text-sm sm:text-base">Идеален за начало</p>
+                    <CardTitle className="text-xl sm:text-2xl font-bold">Free</CardTitle>
+                    <p className="text-gray-400 text-sm sm:text-base">Ideal for getting started</p>
                   </CardHeader>
                   <CardContent>
                     <div className="mb-4">
@@ -295,15 +295,15 @@ export default function Home() {
                     <ul className="space-y-3 text-sm sm:text-base text-gray-300">
                       <li className="flex items-center">
                         <Check className="mr-2 h-4 w-4 text-white flex-shrink-0" />
-                        Основен създател на фунии
+                        Basic Funnel Builder
                       </li>
                       <li className="flex items-center">
                         <Check className="mr-2 h-4 w-4 text-white flex-shrink-0" />
-                        Тестов създател на фунии
+                        Test Funnel Builder
                       </li>
                       <li className="flex items-center">
                         <Check className="mr-2 h-4 w-4 text-white flex-shrink-0" />
-                        24/7 чат на живо
+                        24/7 Live Chat
                       </li>
                     </ul>
                   </CardContent>
@@ -312,7 +312,7 @@ export default function Home() {
                       onClick={() => router.push("/register")}
                       className="w-full border-2 border-white text-sm sm:text-lg py-4 sm:py-6 px-4 sm:px-8 text-black bg-white hover:bg-transparent hover:text-white transition-all duration-300"
                     >
-                      Започнете
+                      Get Started
                       <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
                     </Button>
                   </CardFooter>
@@ -323,8 +323,8 @@ export default function Home() {
               <motion.div variants={itemVariants}>
                 <Card className="relative p-4 sm:p-6 bg-transparent backdrop-blur-2xl border-gray-500 text-white h-full">
                   <CardHeader>
-                    <CardTitle className="text-xl sm:text-2xl font-bold">Про</CardTitle>
-                    <p className="text-gray-400 text-sm sm:text-base">За разрастващи се екипи</p>
+                    <CardTitle className="text-xl sm:text-2xl font-bold">Pro</CardTitle>
+                    <p className="text-gray-400 text-sm sm:text-base">For growing teams</p>
                   </CardHeader>
                   <CardContent>
                     <div className="mb-4">
@@ -334,19 +334,19 @@ export default function Home() {
                     <ul className="space-y-3 text-sm sm:text-base text-gray-300">
                       <li className="flex items-center">
                         <Check className="mr-2 h-4 w-4 text-white flex-shrink-0" />
-                        Всички безплатни функции
+                        All Free Features
                       </li>
                       <li className="flex items-center">
                         <Check className="mr-2 h-4 w-4 text-white flex-shrink-0" />
-                        Мащабируем създател на фунии
+                        Scalable Funnel Builder
                       </li>
                       <li className="flex items-center">
                         <Check className="mr-2 h-4 w-4 text-white flex-shrink-0" />
-                        Анализ на Facebook реклами
+                        Facebook Ads Analysis
                       </li>
                       <li className="flex items-center">
                         <Check className="mr-2 h-4 w-4 text-white flex-shrink-0" />
-                        Приоритетна поддръжка
+                        Priority Support
                       </li>
                     </ul>
                   </CardContent>
@@ -362,7 +362,7 @@ export default function Home() {
                       }}
                       className="w-full border-2 border-white text-sm sm:text-lg py-4 sm:py-6 px-4 sm:px-8 text-black bg-white hover:bg-transparent hover:text-white transition-all duration-300"
                     >
-                      Надградете до Про
+                      Upgrade to Pro
                       <Zap className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
                     </Button>
                   </CardFooter>
@@ -374,12 +374,12 @@ export default function Home() {
                 <Card className="relative p-4 sm:p-6 bg-transparent backdrop-blur-2xl border-gray-500 text-white h-full">
                   <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
                     <span className="bg-white text-black text-xs sm:text-sm font-semibold px-2 sm:px-3 py-1 rounded-full whitespace-nowrap">
-                      Най-популярен
+                      Most Popular
                     </span>
                   </div>
                   <CardHeader>
-                    <CardTitle className="text-xl sm:text-2xl font-bold">Премиум</CardTitle>
-                    <p className="text-gray-400 text-sm sm:text-base">За напреднали потребители</p>
+                    <CardTitle className="text-xl sm:text-2xl font-bold">Premium</CardTitle>
+                    <p className="text-gray-400 text-sm sm:text-base">For advanced users</p>
                   </CardHeader>
                   <CardContent>
                     <div className="mb-4">
@@ -389,23 +389,23 @@ export default function Home() {
                     <ul className="space-y-3 text-sm sm:text-base text-gray-300">
                       <li className="flex items-center">
                         <Check className="mr-2 h-4 w-4 text-white flex-shrink-0" />
-                        Всички Про функции
+                        All Pro Features
                       </li>
                       <li className="flex items-center">
                         <Check className="mr-2 h-4 w-4 text-white flex-shrink-0" />
-                        Информация за конкуренцията
+                        Competitor Insights
                       </li>
                       <li className="flex items-center">
                         <Check className="mr-2 h-4 w-4 text-white flex-shrink-0" />
-                        Разширени заявки и подсказки
+                        Advanced Prompts and Queries
                       </li>
                       <li className="flex items-center">
                         <Check className="mr-2 h-4 w-4 text-white flex-shrink-0" />
-                        24/7 приоритетна поддръжка
+                        24/7 Priority Support
                       </li>
                       <li className="flex items-center">
                         <Check className="mr-2 h-4 w-4 text-white flex-shrink-0" />
-                        Персонален акаунт мениджър
+                        Personal Account Manager
                       </li>
                     </ul>
                   </CardContent>
@@ -421,7 +421,7 @@ export default function Home() {
                       }}
                       className="w-full border-2 border-white text-sm sm:text-lg py-4 sm:py-6 px-4 sm:px-8 text-black bg-white hover:bg-transparent hover:text-white transition-all duration-300"
                     >
-                      Вземете Премиум
+                      Get Premium
                       <Sparkles className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
                     </Button>
                   </CardFooter>
@@ -438,33 +438,33 @@ export default function Home() {
 
 const features = [
   {
-    title: "AI създател на фунии",
-    description: "Генерирайте високоефективни продажбени фунии с нашата AI-powered система.",
+    title: "AI Funnel Creator",
+    description: "Generate high-converting sales funnels with our AI-powered system.",
     icon: Workflow,
   },
   {
-    title: "Анализ на ефективността на рекламите",
-    description: "Получете подробни прозрения за вашите Facebook рекламни кампании и показатели за ефективност.",
+    title: "Ad Performance Analysis",
+    description: "Get detailed insights into your Facebook ad campaigns and performance metrics.",
     icon: BarChart3,
   },
   {
-    title: "Сигурно обработване на данни",
-    description: "Вашите маркетингови данни и информация за клиентите винаги са защитени и криптирани.",
+    title: "Secure Data Handling",
+    description: "Your marketing data and customer information are always protected and encrypted.",
     icon: ShieldCheckIcon,
   },
   {
-    title: "Анализ на конкуренцията",
-    description: "Бъдете винаги крачка напред, анализирайки стратегиите и пазарното позициониране на конкурентите си.",
+    title: "Competitor Analysis",
+    description: "Stay ahead by analyzing competitors' strategies and market positioning.",
     icon: Users2,
   },
   {
-    title: "Маркетингови интеграции",
-    description: "Свържете се безпроблемно с любимите си маркетингови инструменти и CRM системи.",
+    title: "Marketing Integrations",
+    description: "Seamlessly connect with your favorite marketing tools and CRM systems.",
     icon: Puzzle,
   },
   {
-    title: "Експертна поддръжка",
-    description: "Получете помощ за маркетинговата си стратегия от нашия специализиран екип за поддръжка.",
+    title: "Expert Support",
+    description: "Get help with your marketing strategy from our dedicated support team.",
     icon: HeadsetIcon,
   },
 ]
