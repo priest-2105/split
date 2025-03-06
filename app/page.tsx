@@ -229,6 +229,40 @@ export default function Home() {
           </motion.div>
         </motion.section>
 
+        <motion.section className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8">
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            className="max-w-7xl mx-auto"
+          >
+            <div className="text-center mb-12">
+              <motion.h2 variants={itemVariants} className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 px-4">
+                Powerful Features for Your Business
+              </motion.h2>
+              <motion.p variants={itemVariants} className="text-gray-400 max-w-2xl mx-auto text-sm sm:text-base px-4">
+                Everything you need to grow your business and satisfy your customers
+              </motion.p>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+              {features.map((feature, index) => (
+                <motion.div key={feature.title} variants={itemVariants} custom={index}>
+                  <Card
+                    role="button"
+                    tabIndex={0}
+                    className="p-4 sm:p-6 bg-transparent backdrop-blur-2xl border-gray-500 text-white blur-[0.4px] transition-transform duration-300 hover:scale-105 cursor-pointer h-full"
+                  >
+                    <feature.icon className="w-8 h-8 sm:w-12 sm:h-12 text-gray-400 mb-4" />
+                    <h3 className="text-lg sm:text-xl font-semibold mb-2">{feature.title}</h3>
+                    <p className="text-gray-400 text-sm sm:text-base">{feature.description}</p>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        </motion.section>
+
         <motion.section id="pricing" className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8">
           <motion.div
             variants={containerVariants}
