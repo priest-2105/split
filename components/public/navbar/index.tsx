@@ -1,32 +1,26 @@
-"use client"
+import { ThemeSwitcher } from "../../ThemeSwitcher"
+import { Bell, User } from "lucide-react"
 
-import { motion } from "framer-motion"
-
-
-export function Preloader() {
-  
-    
+export function PublicNavbar() {
   return (
-    <motion.div
-      initial={{ opacity: 1 }}
-      animate={{ opacity: 0 }}
-      transition={{ duration: 0.5, ease: "easeInOut" }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black p-4 sm:p-6 lg:p-8"
-    >
-      <div className="relative">
-        <motion.div
-          initial={{ scale: 1 }}
-          animate={{ scale: [1, 1.1, 1] }}
-          transition={{ duration: 1.2, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
-          className="flex items-center gap-1 sm:gap-2"
-        >
-          <span className="text-4xl sm:text-5xl lg:text-6xl font-semibold bg-white text-black px-3 sm:px-4">
-            kreatify
-          </span>
-          <span className="text-4xl sm:text-5xl lg:text-6xl font-semibold text-white">.app</span>
-        </motion.div>
+    <header className="bg-white dark:bg-gray-800 shadow-md">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16">
+          <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">Dashboard</h1>
+          <div className="flex items-center">
+            <ThemeSwitcher />
+            <button className="ml-4 p-2 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+              <span className="sr-only">View notifications</span>
+              <Bell className="h-6 w-6" />
+            </button>
+            <button className="ml-4 p-2 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+              <span className="sr-only">User menu</span>
+              <User className="h-6 w-6" />
+            </button>
+          </div>
+        </div>
       </div>
-    </motion.div>
+    </header>
   )
 }
 
