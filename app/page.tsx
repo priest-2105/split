@@ -425,8 +425,8 @@ export default function Home() {
             </div>
           </motion.div>
         </motion.section>
-      </div>
       <Footer/>
+      </div>
     </div>
   )
 }

@@ -26,8 +26,8 @@ export default function RootLayout({
           <ClientProviders>k,mlkmlkll;l;,
             {/* <Navbar/> */}
             {children}
-            <Footer/>
-            <Footer />
+            {/* <Footer/> */}
+            {/* <Footer /> */}
           </ClientProviders>
         </ThemeProvider>
       </body>
