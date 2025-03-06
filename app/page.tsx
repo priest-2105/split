@@ -29,6 +29,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { useCountUp } from "@/hooks/useCountUp"
 import TypeWriter from "@/components/type-writer"
+import { Navbar } from "@/components/public/layout/Navbar"
 
 export default function Home() {
   const router = useRouter()
@@ -88,6 +89,7 @@ export default function Home() {
 
   return (
     <div ref={targetRef} className="min-h-screen bg-transparent text-white overflow-hidden select-none">
+      <Navbar/>
       {/* <Preloader /> */}
       <motion.div className="fixed inset-0 z-0">
         <div className="absolute inset-0 bg-black" />
@@ -118,7 +120,7 @@ export default function Home() {
               variants={itemVariants}
               className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight flex flex-wrap items-center justify-center gap-2"
             >
-              <span className="bg-white text-black px-2">kreatify</span>
+              <span className="bg-white text-black px-2">SpliT</span>
               <span className="flex items-center">
                 <TypeWriter text=".app" delay={150} />
                 <span className="w-[2px] h-[1em] bg-white animate-[blink_1s_ease-in-out_infinite]" />
@@ -136,7 +138,7 @@ export default function Home() {
                 className="w-full sm:w-auto mt-4 sm:mt-8 border-2 border-white text-white hover:bg-white hover:text-black transition-all duration-300 ease-in-out text-base px-6 py-4 h-auto bg-transparent"
                 onClick={() => router.push("/login")}
               >
-                Започни сега
+                Learn More
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
               <Button
@@ -145,7 +147,7 @@ export default function Home() {
                 className="w-full sm:w-auto mt-4 sm:mt-8 bg-white text-black border-2 border-white hover:bg-transparent hover:text-white transition-all duration-300 ease-in-out text-base px-6 py-4 h-auto"
                 onClick={() => router.push("/register")}
               >
-                Регистрирай се
+                Get Started 
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </motion.div>
@@ -424,6 +426,7 @@ export default function Home() {
           </motion.div>
         </motion.section>
       </div>
+      <Footer/>
     </div>
   )
 }
