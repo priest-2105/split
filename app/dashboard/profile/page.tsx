@@ -1,18 +1,13 @@
 "use client"
 
-import type React from "react"
-
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { createBrowserClient } from "@supabase/ssr"  
-// import { createClientComponentClient } from "@supabase/ssr"
-import { useNotification } from "@/contexts/NotificationContext"
 import { createClient } from "@supabase/supabase-js"
-
+import { useNotification } from "@/contexts/NotificationContext"
 
 export default function ProfilePage() {
   const [username, setUsername] = useState("")
@@ -25,9 +20,9 @@ export default function ProfilePage() {
   const [deleteConfirmation, setDeleteConfirmation] = useState("")
   const [userId, setUserId] = useState<string | null>(null)
   const router = useRouter()
-  const supabase = createBrowserClient(
+  const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   )
   const { addNotification } = useNotification()
 
@@ -75,7 +70,6 @@ export default function ProfilePage() {
     }
   }
 
-  
   const handleDeleteAccount = async () => {
     if (deleteConfirmation !== "DELETE") {
       addNotification("error", "Please type DELETE to confirm account deletion")
