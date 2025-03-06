@@ -6,7 +6,7 @@ import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import { Footer } from "@/components/public/layout/Footer"
 import { Navbar } from "@/components/public/layout/Navbar"
-import faviconfrom "../public/"
+import favicon from "@/public/split-.png"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -23,15 +23,14 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-      <link rel="shortcut icon" href="../" type="image/x-icon" />
+        <link rel="icon" href={favicon.src} type="image/png" />
       </head>
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <ClientProviders>k,mlkmlkll;l;,
-            {/* <Navbar/> */}
+          <ClientProviders>
+            <Navbar/>
             {children}
-            {/* <Footer/> */}
-            {/* <Footer /> */}
+            <Footer/>
           </ClientProviders>
         </ThemeProvider>
       </body>

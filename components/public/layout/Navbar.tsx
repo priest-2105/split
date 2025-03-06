@@ -5,6 +5,15 @@ import Link from "next/link"
 import { useTheme } from "next-themes"
 import { motion } from "framer-motion"
 import { Moon, Sun } from "lucide-react"
+import Image from "next/image"
+import Logo from "@/public/split-.png"
+
+const handleScroll = (id: string) => {
+  const element = document.getElementById(id)
+  if (element) {
+    element.scrollIntoView({ behavior: "smooth" })
+  }
+}
 
 export const Navbar = () => {
   const [mounted, setMounted] = useState(false)
@@ -23,19 +32,27 @@ export const Navbar = () => {
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
             <Link href="/" className="text-2xl font-bold text-gray-900 dark:text-white">
-              split
+            <Image src={Logo} height={50} width={50} alt="split logo"  />
             </Link>
           </div>
           <div className="flex items-center">
             <Link
-              href="/features"
+              href="/#features"
               className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium"
+              onClick={(e) => {
+                e.preventDefault()
+                handleScroll("features")
+              }}
             >
               Features
             </Link>
             <Link
-              href="/pricing"
+              href="/#pricing"
               className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium"
+              onClick={(e) => {
+                e.preventDefault()
+                handleScroll("pricing")
+              }}
             >
               Pricing
             </Link>
