@@ -123,15 +123,15 @@ export default function Home() {
               variants={itemVariants}
               className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight flex flex-wrap items-center justify-center gap-2"
             >
-              <span className="bg-white text-black px-2">SpliT</span>
+              <span className="bg-black dark:bg-white text-white dark:text-black px-2">SpliT</span>
               <span className="flex items-center">
                 <TypeWriter text=".app" delay={150} />
-                <span className="w-[2px] h-[1em] bg-white animate-[blink_1s_ease-in-out_infinite]" />
+                <span className="w-[2px] h-[1em] bg-black dark:bg-white animate-[blink_1s_ease-in-out_infinite]" />
               </span>
             </motion.h1>
             <motion.p
               variants={itemVariants}
-              className="text-base sm:text-lg lg:text-xl text-gray-400 max-w-2xl mx-auto px-4"
+              className="text-base sm:text-lg lg:text-xl text-gray-700 dark:text-gray-400 max-w-2xl mx-auto px-4"
             >
               The fastest and most efficient way to launch, test, and validate your business idea with the help of AI
             </motion.p>
@@ -175,7 +175,7 @@ export default function Home() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
                 viewport={{ once: true }}
-                className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4"
+                className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 text-gray-900 dark:text-white"
               >
                 Our Impact in Numbers
               </motion.h2>
@@ -199,7 +199,7 @@ export default function Home() {
               >
                 <Users2 className="w-8 h-8 sm:w-12 sm:h-12 text-gray-400 mb-4 mx-auto" />
                 <div className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2">{projectsCount.toLocaleString()}</div>
-                <p className="text-gray-400 text-sm sm:text-base">Active Users</p>
+                <p className="text-gray-700 dark:text-gray-400 text-sm sm:text-base">Active Users</p>
               </motion.div>
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -212,7 +212,7 @@ export default function Home() {
                 <div className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2">
                   {deploymentCount.toLocaleString()}
                 </div>
-                <p className="text-gray-400 text-sm sm:text-base">Businesses Created</p>
+                <p className="text-gray-700 dark:text-gray-400 text-sm sm:text-base">Businesses Created</p>
               </motion.div>
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -225,7 +225,7 @@ export default function Home() {
                 <div className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2">
                   ${(securityCount * 100000).toLocaleString()}
                 </div>
-                <p className="text-gray-400 text-sm sm:text-base">Revenue Generated</p>
+                <p className="text-gray-700 dark:text-gray-400 text-sm sm:text-base">Revenue Generated</p>
               </motion.div>
             </div>
           </motion.div>
@@ -240,10 +240,10 @@ export default function Home() {
             className="max-w-7xl mx-auto"
           >
             <div className="text-center mb-12">
-              <motion.h2 variants={itemVariants} className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 px-4">
+              <motion.h2 variants={itemVariants} className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 px-4 text-gray-900 dark:text-white">
                 Powerful Features for Your Business
               </motion.h2>
-              <motion.p variants={itemVariants} className="text-gray-400 max-w-2xl mx-auto text-sm sm:text-base px-4">
+              <motion.p variants={itemVariants} className="text-gray-700 dark:text-gray-400 max-w-2xl mx-auto text-sm sm:text-base px-4">
                 Everything you need to grow your business and satisfy your customers
               </motion.p>
             </div>
@@ -274,10 +274,10 @@ export default function Home() {
             className="max-w-7xl mx-auto"
           >
             <div className="text-center mb-12">
-              <motion.h2 variants={itemVariants} className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4">
+              <motion.h2 variants={itemVariants} className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 text-gray-900 dark:text-white">
                 Simple and Transparent Pricing
               </motion.h2>
-              <motion.p variants={itemVariants} className="text-gray-400 max-w-2xl mx-auto text-sm sm:text-base">
+              <motion.p variants={itemVariants} className="text-gray-700 dark:text-gray-400 max-w-2xl mx-auto text-sm sm:text-base">
                 Choose the perfect plan for your needs. Always know what you'll pay.
               </motion.p>
             </div>
@@ -287,7 +287,7 @@ export default function Home() {
                 <Card className="relative p-4 sm:p-6 bg-transparent backdrop-blur-2xl border-gray-500 text-white h-full">
                   <CardHeader>
                     <CardTitle className="text-xl sm:text-2xl font-bold">Free</CardTitle>
-                    <p className="text-gray-400 text-sm sm:text-base">Ideal for getting started</p>
+                    <p className="text-gray-700 dark:text-gray-400 text-sm sm:text-base">Ideal for getting started</p>
                   </CardHeader>
                   <CardContent>
                     <div className="mb-4">
@@ -326,7 +326,7 @@ export default function Home() {
                 <Card className="relative p-4 sm:p-6 bg-transparent backdrop-blur-2xl border-gray-500 text-white h-full">
                   <CardHeader>
                     <CardTitle className="text-xl sm:text-2xl font-bold">Pro</CardTitle>
-                    <p className="text-gray-400 text-sm sm:text-base">For growing teams</p>
+                    <p className="text-gray-700 dark:text-gray-400 text-sm sm:text-base">For growing teams</p>
                   </CardHeader>
                   <CardContent>
                     <div className="mb-4">
@@ -375,13 +375,13 @@ export default function Home() {
               <motion.div variants={itemVariants}>
                 <Card className="relative p-4 sm:p-6 bg-transparent backdrop-blur-2xl border-gray-500 text-white h-full">
                   <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                    <span className="bg-white text-black text-xs sm:text-sm font-semibold px-2 sm:px-3 py-1 rounded-full whitespace-nowrap">
+                    <span className="bg-black dark:bg-white text-white dark:text-black text-xs sm:text-sm font-semibold px-2 sm:px-3 py-1 rounded-full whitespace-nowrap">
                       Most Popular
                     </span>
                   </div>
                   <CardHeader>
                     <CardTitle className="text-xl sm:text-2xl font-bold">Premium</CardTitle>
-                    <p className="text-gray-400 text-sm sm:text-base">For advanced users</p>
+                    <p className="text-gray-700 dark:text-gray-400 text-sm sm:text-base">For advanced users</p>
                   </CardHeader>
                   <CardContent>
                     <div className="mb-4">
