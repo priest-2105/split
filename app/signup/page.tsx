@@ -6,6 +6,7 @@ import { createBrowserClient } from "@supabase/ssr"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { toast } from "react-hot-toast"
+import { AuthNavbar } from "@/components/auth/navbar"
 
 export default function SignUp() {
   const [email, setEmail] = useState("")
@@ -37,7 +38,9 @@ export default function SignUp() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen py-2">
+    <>   
+    <AuthNavbar/>
+     <div className="flex flex-col items-center justify-center min-h-screen py-2">
       <h1 className="text-4xl font-bold mb-8">Sign Up</h1>
       <form onSubmit={handleSignUp} className="w-full max-w-md space-y-4">
         <Input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
@@ -60,6 +63,7 @@ export default function SignUp() {
         </Button>
       </form>
     </div>
+    </>
   )
 }
 
