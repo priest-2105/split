@@ -143,7 +143,7 @@ const Calendar = () => {
         transition={{ duration: 0.5 }}
       >
         <h2 className="text-2xl font-semibold">
-          {currentDate.toLocaleSntring("default", { month: "long", year: "numeric" })}
+          {currentDate.toLocaleString("default", { month: "long", year: "numeric" })}
         </h2>
         <div className="flex space-x-2">
           <Button variant="outline" size="icon" onClick={prevMonth} aria-label="Previous month">
