@@ -17,7 +17,7 @@ import {
 } from "lucide-react"
 import { useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
-import { Footer } from "@/components/layout/Footer"
+import { Footer } from "@/components/public/layout/Footer"
 import { Preloader } from "@/components/public/preloader/index"
 
 const blink = {
