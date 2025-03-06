@@ -36,6 +36,7 @@ export default function Home() {
   const targetRef = useRef<HTMLDivElement>(null)
   const mouseX = useMotionValue(0)
   const mouseY = useMotionValue(0)
+  const featuresRef = useRef<HTMLDivElement>(null)
 
   const gridX = useSpring(mouseX, {
     stiffness: 50,
@@ -136,7 +137,11 @@ export default function Home() {
               <Button
                 size="lg"
                 className="w-full sm:w-auto mt-4 sm:mt-8 border-2 border-white text-white hover:bg-white hover:text-black transition-all duration-300 ease-in-out text-base px-6 py-4 h-auto bg-transparent"
-                onClick={() => router.push("/login")}
+                onClick={() => {
+                  if (featuresRef.current) {
+                    featuresRef.current.scrollIntoView({ behavior: "smooth" })
+                  }
+                }}
               >
                 Learn More
                 <ArrowRight className="ml-2 h-5 w-5" />
@@ -154,7 +159,7 @@ export default function Home() {
           </motion.div>
         </motion.section>
 
-        <section className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8 mx-4">
+        <motion.section ref={featuresRef} className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8 mx-4">
           <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
@@ -222,7 +227,7 @@ export default function Home() {
               </motion.div>
             </div>
           </motion.div>
-        </section>
+        </motion.section>
 
         <motion.section className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8">
           <motion.div
