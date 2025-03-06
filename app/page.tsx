@@ -89,15 +89,17 @@ export default function Home() {
   }
 
   return (
-    <div ref={targetRef} className="min-h-screen bg-transparent text-white overflow-hidden select-none">
+    <div ref={targetRef} className="min-h-screen bg-transparent text-black dark:text-white overflow-hidden select-none">
       <Navbar/>
       {/* <Preloader /> */}
       <motion.div className="fixed inset-0 z-0">
-        <div className="absolute inset-0 bg-black" />
+        <div className="absolute inset-0 bg-white dark:bg-black" />
         <motion.div
           className="absolute inset-0"
           style={{
             backgroundImage: `
+              linear-gradient(to right, rgba(0, 0, 0, 0.1) 1px, transparent 1px),
+              linear-gradient(to bottom, rgba(0, 0, 0, 0.1) 1px, transparent 1px),
               linear-gradient(to right, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
               linear-gradient(to bottom, rgba(255, 255, 255, 0.1) 1px, transparent 1px)
             `,
@@ -106,7 +108,7 @@ export default function Home() {
             y: gridY,
           }}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-white dark:from-black via-transparent to-transparent" />
       </motion.div>
 
       <div className="relative z-10">
@@ -136,7 +138,7 @@ export default function Home() {
             <motion.div variants={itemVariants} className="flex flex-col sm:flex-row gap-4 justify-center px-4">
               <Button
                 size="lg"
-                className="w-full sm:w-auto mt-4 sm:mt-8 border-2 border-white text-white hover:bg-white hover:text-black transition-all duration-300 ease-in-out text-base px-6 py-4 h-auto bg-transparent"
+                className="w-full sm:w-auto mt-4 sm:mt-8 border-2 border-black dark:border-white text-black dark:text-white hover:bg-black dark:hover:bg-white hover:text-white dark:hover:text-black transition-all duration-300 ease-in-out text-base px-6 py-4 h-auto bg-transparent"
                 onClick={() => {
                   if (featuresRef.current) {
                     featuresRef.current.scrollIntoView({ behavior: "smooth" })
@@ -149,7 +151,7 @@ export default function Home() {
               <Button
                 size="lg"
                 variant="ghost"
-                className="w-full sm:w-auto mt-4 sm:mt-8 bg-white text-black border-2 border-white hover:bg-transparent hover:text-white transition-all duration-300 ease-in-out text-base px-6 py-4 h-auto"
+                className="w-full sm:w-auto mt-4 sm:mt-8 bg-black dark:bg-white text-white dark:text-black border-2 border-black dark:border-white hover:bg-transparent hover:text-black dark:hover:text-white transition-all duration-300 ease-in-out text-base px-6 py-4 h-auto"
                 onClick={() => router.push("/register")}
               >
                 Get Started 
@@ -251,7 +253,7 @@ export default function Home() {
                   <Card
                     role="button"
                     tabIndex={0}
-                    className="p-4 sm:p-6 bg-transparent backdrop-blur-2xl border-gray-500 text-white blur-[0.4px] transition-transform duration-300 hover:scale-105 cursor-pointer h-full"
+                    className="p-4 sm:p-6 bg-white dark:bg-transparent backdrop-blur-2xl border-gray-500 text-black dark:text-white blur-[0.4px] transition-transform duration-300 hover:scale-105 cursor-pointer h-full"
                   >
                     <feature.icon className="w-8 h-8 sm:w-12 sm:h-12 text-gray-400 mb-4" />
                     <h3 className="text-lg sm:text-xl font-semibold mb-2">{feature.title}</h3>
