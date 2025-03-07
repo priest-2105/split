@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { motion } from "framer-motion"
@@ -45,6 +45,9 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         data: { user },
       } = await supabase.auth.getUser()
       return user
+    },
+    onError: () => {
+      router.push("/signin")
     },
   })
 

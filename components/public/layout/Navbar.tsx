@@ -8,6 +8,7 @@ import { Moon, Sun } from "lucide-react"
 import Image from "next/image"
 import Logo from "@/public/split-.png"
 import { createClient } from "@supabase/supabase-js"
+import { useQuery } from "@tanstack/react-query"
 
 const handleScroll = (id: string) => {
   const element = document.getElementById(id)
@@ -19,22 +20,24 @@ const handleScroll = (id: string) => {
 export const Navbar = () => {
   const [mounted, setMounted] = useState(false)
   const { theme, setTheme } = useTheme()
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   )
 
+  const { data: userData, isLoading: isUserLoading } = useQuery({
+    queryKey: ["user"],
+    queryFn: async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+      return user
+    },
+  })
+
   useEffect(() => {
     setMounted(true)
-    const checkUser = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (session) {
-        setIsLoggedIn(true)
-      }
-    }
-    checkUser()
-  }, [supabase])
+  }, [])
 
   return (
     <motion.nav
@@ -71,12 +74,14 @@ export const Navbar = () => {
             >
               Pricing
             </Link>
-            <Link
-              href={isLoggedIn ? "/dashboard" : "/signin"}
-              className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-            >
-              {isLoggedIn ? "Dashboard" : "Sign In"}
-            </Link>
+            {!isUserLoading && (
+              <Link
+                href={userData ? "/dashboard" : "/signin"}
+                className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium"
+              >
+                {userData ? "Dashboard" : "Sign In"}
+              </Link>
+            )}
             <button
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
               className="ml-4 p-2 rounded-md text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white focus:outline-none"
