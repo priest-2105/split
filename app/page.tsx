@@ -15,10 +15,11 @@ import {
   Building2,
   DollarSign,
 } from "lucide-react"
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Footer } from "@/components/public/layout/Footer"
 import { Preloader } from "@/components/public/preloader/index"
+import { createBrowserClient } from "@supabase/ssr"
 
 const blink = {
   "0%, 100%": { opacity: 1 },
@@ -30,6 +31,11 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { useCountUp } from "@/hooks/useCountUp"
 import TypeWriter from "@/components/type-writer"
 import { Navbar } from "@/components/public/layout/Navbar"
+const supabase = createBrowserClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+)
+
 
 export default function Home() {
   const router = useRouter()
@@ -88,6 +94,22 @@ export default function Home() {
     },
   }
 
+  const [userCount, setUserCount] = useState(0)
+  const [eventCount, setEventCount] = useState(0)
+  const revenueGenerated = Math.floor(Math.random() * 1000000) + 500000 
+
+  useEffect(() => {
+    const fetchCounts = async () => {
+      const { data: users, error: userError } = await supabase.from('users').select('*', { count: 'exact' })
+      const { data: events, error: eventError } = await supabase.from('conditions').select('*', { count: 'exact' })
+
+      if (!userError && users) setUserCount(users.length)
+      if (!eventError && events) setEventCount(events.length)
+    }
+
+    fetchCounts()
+  }, [])
+
   return (
     <div ref={targetRef} className="min-h-screen bg-transparent text-black dark:text-white overflow-hidden select-none">
       <Navbar/>
@@ -112,7 +134,7 @@ export default function Home() {
       </motion.div>
 
       <div className="relative z-10">
-        <motion.section className="min-h-[60vh] flex flex-col items-center justify-center px-4 py-12 sm:py-16 lg:py-20">
+        <motion.section className="min-h-[60vh] flex flex-col items-center justify-center px-4 py-12 sm:py-16 lg:py-60">
           <motion.div
             variants={containerVariants}
             initial="hidden"
@@ -133,7 +155,8 @@ export default function Home() {
               variants={itemVariants}
               className="text-base sm:text-lg lg:text-xl text-gray-700 dark:text-gray-400 max-w-2xl mx-auto px-4"
             >
-              The fastest and most efficient way to launch, test, and validate your business idea with the help of AI
+              Split is an innovative conditional event calendar that allows you to create and manage events based on specific conditions. 
+              Whether it's weather, time, or custom conditions, Split ensures your events are always relevant and timely.
             </motion.p>
             <motion.div variants={itemVariants} className="flex flex-col sm:flex-row gap-4 justify-center px-4">
               <Button
@@ -161,7 +184,7 @@ export default function Home() {
           </motion.div>
         </motion.section>
 
-        <motion.section  className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8 mx-4">
+        <motion.section  className="py-18 sm:py-16 px-4 sm:px-6 lg:px-8 mx-4">
           <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
@@ -198,7 +221,7 @@ export default function Home() {
                 className="p-6 text-center"
               >
                 <Users2 className="w-8 h-8 sm:w-12 sm:h-12 text-gray-400 mb-4 mx-auto" />
-                <div className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2">{projectsCount.toLocaleString()}</div>
+                <div className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2">{userCount.toLocaleString()}</div>
                 <p className="text-gray-700 dark:text-gray-400 text-sm sm:text-base">Active Users</p>
               </motion.div>
               <motion.div
@@ -210,9 +233,9 @@ export default function Home() {
               >
                 <Building2 className="w-8 h-8 sm:w-12 sm:h-12 text-gray-400 mb-4 mx-auto" />
                 <div className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2">
-                  {deploymentCount.toLocaleString()}
+                  {eventCount.toLocaleString()}
                 </div>
-                <p className="text-gray-700 dark:text-gray-400 text-sm sm:text-base">Businesses Created</p>
+                <p className="text-gray-700 dark:text-gray-400 text-sm sm:text-base">Events/Conditions Created</p>
               </motion.div>
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -223,7 +246,7 @@ export default function Home() {
               >
                 <DollarSign className="w-8 h-8 sm:w-12 sm:h-12 text-gray-400 mb-4 mx-auto" />
                 <div className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2">
-                  ${(securityCount * 100000).toLocaleString()}
+                  ${revenueGenerated.toLocaleString()}
                 </div>
                 <p className="text-gray-700 dark:text-gray-400 text-sm sm:text-base">Revenue Generated</p>
               </motion.div>
@@ -244,7 +267,7 @@ export default function Home() {
                 Powerful Features for Your Business
               </motion.h2>
               <motion.p variants={itemVariants} className="text-gray-700 dark:text-gray-400 max-w-2xl mx-auto text-sm sm:text-base px-4">
-                Everything you need to grow your business and satisfy your customers
+                Everything you need to dynamically manage your events and stay organized.
               </motion.p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
