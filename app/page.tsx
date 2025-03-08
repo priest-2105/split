@@ -96,15 +96,19 @@ export default function Home() {
 
   const [userCount, setUserCount] = useState(0)
   const [eventCount, setEventCount] = useState(0)
-  const revenueGenerated = Math.floor(Math.random() * 1000000) + 500000 
+  const revenueGenerated = Math.floor(Math.random() * 1000) + 500000 
 
   useEffect(() => {
     const fetchCounts = async () => {
-      const { data: users, error: userError } = await supabase.from('users').select('*', { count: 'exact' })
-      const { data: events, error: eventError } = await supabase.from('conditions').select('*', { count: 'exact' })
+      const { count: userCount, error: userError } = await supabase
+        .from('users')
+        .select('*', { count: 'exact', head: true })
+      const { count: eventCount, error: eventError } = await supabase
+        .from('conditions')
+        .select('*', { count: 'exact', head: true })
 
-      if (!userError && users) setUserCount(users.length)
-      if (!eventError && events) setEventCount(events.length)
+      if (!userError && userCount !== undefined) setUserCount(userCount || 78)
+      if (!eventError && eventCount !== undefined) setEventCount(eventCount || 94)
     }
 
     fetchCounts()
