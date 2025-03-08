@@ -161,7 +161,7 @@ export default function Home() {
           </motion.div>
         </motion.section>
 
-        <motion.section ref={featuresRef} id="features" className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8 mx-4">
+        <motion.section  className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8 mx-4">
           <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
@@ -231,7 +231,7 @@ export default function Home() {
           </motion.div>
         </motion.section>
 
-        <motion.section className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8">
+        <motion.section ref={featuresRef} id="features" className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8">
           <motion.div
             variants={containerVariants}
             initial="hidden"
