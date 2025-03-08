@@ -27,20 +27,28 @@ export function ConditionManager() {
   const supabase = createClient()
 
   useEffect(() => {
-    const checkAuth = async () => {
-      const {
-        data: { user },
-        error,
-      } = await supabase.auth.getUser()
-      if (user) {
-        console.log("Auth check: User authenticated", user)
-        setUserId(user.id)
-      } else {
-        console.error("Auth check: User not authenticated", error)
+    const fetchUserRecord = async () => {
+      // Get authenticated user from auth system first
+      const { data: authData, error: authError } = await supabase.auth.getUser()
+      if (authError || !authData.user) {
+        console.error("Auth check failed:", authError)
+        return
+      }
+      // Now query the "users" table using the auth user id for your application-specific data
+      const { data: userRecord, error: userError } = await supabase
+        .from("users")
+        .select("*")
+        .eq("id", authData.user.id)
+        .single()
+      if (userError) {
+        console.error("Error fetching user record:", userError)
+      } else if (userRecord) {
+        console.log("User record found:", userRecord)
+        setUserId(userRecord.id)
       }
     }
-    checkAuth()
-  }, [supabase.auth.getUser]) // Added supabase.auth.getUser as a dependency
+    fetchUserRecord()
+  }, [supabase])
 
   const {
     data: conditions = [],

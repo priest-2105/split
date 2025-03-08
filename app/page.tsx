@@ -102,12 +102,13 @@ export default function Home() {
 
   useEffect(() => {
     const fetchCounts = async () => {
-      const { count: userCount, error: userError } = await supabase
+      // Use 'users' matching the table used in sign up and sign in
+      const { data: users, error: userError, count: userCount } = await supabase
         .from('users')
-        .select('*', { count: 'exact', head: true })
-      const { count: eventCount, error: eventError } = await supabase
+        .select('*', { count: 'exact' })
+      const { data: events, error: eventError, count: eventCount } = await supabase
         .from('conditions')
-        .select('*', { count: 'exact', head: true })
+        .select('*', { count: 'exact' })
 
       if (!userError && userCount !== undefined) setUserCount(userCount || 0)
       if (!eventError && eventCount !== undefined) setEventCount(eventCount || 0)
