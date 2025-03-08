@@ -67,6 +67,9 @@ export default function SignIn() {
           Forgot Password?
         </Link>
       </div>
+      <div className="mt-4 text-center">
+        Don't have an account? <Link href="/signup" className="text-blue-500 hover:underline">Sign Up</Link>
+      </div>
     </div>
     </>
   )

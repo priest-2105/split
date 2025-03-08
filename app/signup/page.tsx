@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { toast } from "react-hot-toast"
 import { AuthNavbar } from "@/components/auth/navbar"
+import Link from "next/link"
 
 export default function SignUp() {
   const [email, setEmail] = useState("")
@@ -62,6 +63,14 @@ export default function SignUp() {
           Sign Up
         </Button>
       </form>
+      <div className="mt-4">
+        <span>
+          Already Have an Account? 
+          <Link href="/signin" className="text-blue-500 ml-2 hover:underline">
+          Sign in
+        </Link>
+        </span>
+      </div>
     </div>
     </>
   )

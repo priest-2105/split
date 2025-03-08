@@ -6,6 +6,7 @@ import { createBrowserClient } from "@supabase/ssr"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { toast, Toaster } from "react-hot-toast"
+import { AuthNavbar } from "@/components/auth/navbar"
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("")
@@ -30,6 +31,8 @@ export default function ForgotPassword() {
   }
 
   return (
+     <>
+      <AuthNavbar/>
     <div className="flex flex-col items-center justify-center min-h-screen py-2">
       <Toaster position="top-right" />
       <h1 className="text-4xl font-bold mb-8">Forgot Password</h1>
@@ -40,6 +43,7 @@ export default function ForgotPassword() {
         </Button>
       </form>
     </div>
+    </>
   )
 }
 
