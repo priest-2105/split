@@ -286,15 +286,15 @@ export default function Home() {
               <motion.div variants={itemVariants}>
                 <Card className="relative p-4 sm:p-6 bg-transparent backdrop-blur-2xl border-gray-500 text-white h-full">
                   <CardHeader>
-                    <CardTitle className="text-xl sm:text-2xl font-bold">Free</CardTitle>
+                    <CardTitle className="text-xl sm:text-2xl text-gray-900 dark:text-gray-200 font-bold">Free</CardTitle>
                     <p className="text-gray-700 dark:text-gray-400 text-sm sm:text-base">Ideal for getting started</p>
-                  </CardHeader>
+                  </CardHeader> 
                   <CardContent>
                     <div className="mb-4">
-                      <span className="text-2xl sm:text-4xl font-bold">$0</span>
+                      <span className="text-2xl sm:text-4xl text-gray-500 font-bold">$0</span>
                       <span className="text-gray-400 ml-2 text-sm sm:text-base">/ month</span>
                     </div>
-                    <ul className="space-y-3 text-sm sm:text-base text-gray-300">
+                    <ul className="space-y-3 text-sm sm:text-base text-gray-400">
                       <li className="flex items-center">
                         <Check className="mr-2 h-4 w-4 text-white flex-shrink-0" />
                         Basic Funnel Builder
@@ -312,7 +312,7 @@ export default function Home() {
                   <CardFooter>
                     <Button
                       onClick={() => router.push("/register")}
-                      className="w-full border-2 border-white text-sm sm:text-lg py-4 sm:py-6 px-4 sm:px-8 text-black bg-white hover:bg-transparent hover:text-white transition-all duration-300"
+                      className="w-full text-sm sm:text-lg py-4 sm:py-6 px-4 sm:px-8 bg-black dark:bg-white text-white dark:text-black border-2 border-black dark:border-white hover:bg-transparent hover:text-black dark:hover:text-white transition-all duration-300 ease-in-out"
                     >
                       Get Started
                       <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
@@ -325,15 +325,15 @@ export default function Home() {
               <motion.div variants={itemVariants}>
                 <Card className="relative p-4 sm:p-6 bg-transparent backdrop-blur-2xl border-gray-500 text-white h-full">
                   <CardHeader>
-                    <CardTitle className="text-xl sm:text-2xl font-bold">Pro</CardTitle>
+                    <CardTitle className="text-xl sm:text-2xl text-gray-900 dark:text-gray-200 font-bold">Pro</CardTitle>
                     <p className="text-gray-700 dark:text-gray-400 text-sm sm:text-base">For growing teams</p>
                   </CardHeader>
                   <CardContent>
                     <div className="mb-4">
-                      <span className="text-2xl sm:text-4xl font-bold">$4.99</span>
+                      <span className="text-2xl text-gray-500 sm:text-4xl font-bold">$4.99</span>
                       <span className="text-gray-400 ml-2 text-sm sm:text-base">/ month</span>
                     </div>
-                    <ul className="space-y-3 text-sm sm:text-base text-gray-300">
+                    <ul className="space-y-3 text-sm sm:text-base text-gray-400">
                       <li className="flex items-center">
                         <Check className="mr-2 h-4 w-4 text-white flex-shrink-0" />
                         All Free Features
@@ -362,7 +362,7 @@ export default function Home() {
                           router.push("/login?redirect=/payment?plan=pro")
                         }
                       }}
-                      className="w-full border-2 border-white text-sm sm:text-lg py-4 sm:py-6 px-4 sm:px-8 text-black bg-white hover:bg-transparent hover:text-white transition-all duration-300"
+                      className="w-full text-sm sm:text-lg py-4 sm:py-6 px-4 sm:px-8 bg-black dark:bg-white text-white dark:text-black border-2 border-black dark:border-white hover:bg-transparent hover:text-black dark:hover:text-white transition-all duration-300 ease-in-out"
                     >
                       Upgrade to Pro
                       <Zap className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
@@ -380,15 +380,15 @@ export default function Home() {
                     </span>
                   </div>
                   <CardHeader>
-                    <CardTitle className="text-xl sm:text-2xl font-bold">Premium</CardTitle>
+                    <CardTitle className="text-xl sm:text-2xl text-gray-900 dark:text-gray-200 font-bold">Premium</CardTitle>
                     <p className="text-gray-700 dark:text-gray-400 text-sm sm:text-base">For advanced users</p>
                   </CardHeader>
                   <CardContent>
                     <div className="mb-4">
-                      <span className="text-2xl sm:text-4xl font-bold">$29.99</span>
+                      <span className="text-2xl sm:text-4xl text-gray-500 font-bold">$29.99</span>
                       <span className="text-gray-400 ml-2 text-sm sm:text-base">/ month</span>
                     </div>
-                    <ul className="space-y-3 text-sm sm:text-base text-gray-300">
+                    <ul className="space-y-3 text-sm sm:text-base text-gray-400">
                       <li className="flex items-center">
                         <Check className="mr-2 h-4 w-4 text-white flex-shrink-0" />
                         All Pro Features
@@ -421,7 +421,7 @@ export default function Home() {
                           router.push("/login?redirect=/payment?plan=premium")
                         }
                       }}
-                      className="w-full border-2 border-white text-sm sm:text-lg py-4 sm:py-6 px-4 sm:px-8 text-black bg-white hover:bg-transparent hover:text-white transition-all duration-300"
+                      className="w-full text-sm sm:text-lg py-4 sm:py-6 px-4 sm:px-8 bg-black dark:bg-white text-white dark:text-black border-2 border-black dark:border-white hover:bg-transparent hover:text-black dark:hover:text-white transition-all duration-300 ease-in-out"
                     >
                       Get Premium
                       <Sparkles className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
