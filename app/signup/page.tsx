@@ -21,7 +21,7 @@ export default function SignUp() {
 
   const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -33,8 +33,18 @@ export default function SignUp() {
     if (error) {
       toast.error(error.message)
     } else {
-      toast.success("Sign up successful! Please check your email to confirm your account.")
-      router.push("/signin")
+      const user = data.user
+      if (user) {
+        const { error: insertError } = await supabase.from('users').insert([
+          { id: user.id, email: user.email, username }
+        ])
+        if (insertError) {
+          toast.error(insertError.message)
+        } else {
+          toast.success("Sign up successful! Please check your email to confirm your account.")
+          router.push("/signin")
+        }
+      }
     }
   }
 

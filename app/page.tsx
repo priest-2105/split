@@ -14,6 +14,8 @@ import {
   HeadsetIcon,
   Building2,
   DollarSign,
+  Calendar,
+  Moon,
 } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
@@ -107,8 +109,8 @@ export default function Home() {
         .from('conditions')
         .select('*', { count: 'exact', head: true })
 
-      if (!userError && userCount !== undefined) setUserCount(userCount || 78)
-      if (!eventError && eventCount !== undefined) setEventCount(eventCount || 94)
+      if (!userError && userCount !== undefined) setUserCount(userCount || 0)
+      if (!eventError && eventCount !== undefined) setEventCount(eventCount || 0)
     }
 
     fetchCounts()
@@ -467,34 +469,34 @@ export default function Home() {
 
 const features = [
   {
-    title: "AI Funnel Creator",
-    description: "Generate high-converting sales funnels with our AI-powered system.",
-    icon: Workflow,
+    title: "Interactive Calendar Grid",
+    description: "Displays a responsive calendar layout that dynamically updates as users switch between months.",
+    icon: Calendar,
   },
   {
-    title: "Ad Performance Analysis",
-    description: "Get detailed insights into your Facebook ad campaigns and performance metrics.",
-    icon: BarChart3,
+    title: "Conditional Events",
+    description: "Users can assign conditions to specific dates or months. Events are only triggered when conditions are met.",
+    icon: Zap,
   },
   {
-    title: "Secure Data Handling",
-    description: "Your marketing data and customer information are always protected and encrypted.",
+    title: "Dynamic Month Navigation",
+    description: "Navigate between months using arrow buttons. The calendar dynamically adjusts to show the correct days of the month.",
+    icon: ArrowRight,
+  },
+  {
+    title: "User Authentication",
+    description: "Sign Up, Login, and Forgot Password pages are implemented using Supabase Auth for secure login experience.",
     icon: ShieldCheckIcon,
   },
   {
-    title: "Competitor Analysis",
-    description: "Stay ahead by analyzing competitors' strategies and market positioning.",
-    icon: Users2,
+    title: "Data Storage & Backend",
+    description: "Supabase is used to store user events and conditions, and AWS S3 is used for file uploads.",
+    icon: BarChart3,
   },
   {
-    title: "Marketing Integrations",
-    description: "Seamlessly connect with your favorite marketing tools and CRM systems.",
-    icon: Puzzle,
-  },
-  {
-    title: "Expert Support",
-    description: "Get help with your marketing strategy from our dedicated support team.",
-    icon: HeadsetIcon,
+    title: "Dark Mode Support",
+    description: "The app supports light mode and dark mode for accessibility and better user experience.",
+    icon: Moon,
   },
 ]
 

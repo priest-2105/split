@@ -13,11 +13,21 @@ export default function Auth() {
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setLoading(true)
-    const { error } = await supabase.auth.signInWithOtp({ email })
+    const { data, error } = await supabase.auth.signInWithOtp({ email })
     if (error) {
       alert(error.message)
     } else {
-      alert("Check your email for the login link!")
+      const user = data.user
+      if (user) {
+        const { error: insertError } = await supabase.from('users').upsert([
+          { id: user.id, email: user.email }
+        ])
+        if (insertError) {
+          alert(insertError.message)
+        } else {
+          alert("Check your email for the login link!")
+        }
+      }
     }
     setLoading(false)
   }
