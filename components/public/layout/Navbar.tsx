@@ -7,7 +7,7 @@ import { motion } from "framer-motion"
 import { Moon, Sun } from "lucide-react"
 import Image from "next/image"
 import Logo from "@/public/split-.png"
-import { createClient } from "@supabase/supabase-js"
+import { createBrowserClient } from "@supabase/ssr"
 import { useQuery } from "@tanstack/react-query"
 
 const handleScroll = (id: string) => {
@@ -20,7 +20,7 @@ const handleScroll = (id: string) => {
 export const Navbar = () => {
   const [mounted, setMounted] = useState(false)
   const { theme, setTheme } = useTheme()
-  const supabase = createClient(
+  const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   )
@@ -38,6 +38,11 @@ export const Navbar = () => {
   useEffect(() => {
     setMounted(true)
   }, [])
+
+  // Compute user's display name if available.
+  const displayName = userData 
+    ? userData.user_metadata?.username || (userData.email ? userData.email.split("@")[0] : "Dashboard")
+    : null
 
   return (
     <motion.nav
