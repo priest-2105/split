@@ -152,7 +152,7 @@ export default function Home() {
                 size="lg"
                 variant="ghost"
                 className="w-full sm:w-auto mt-4 sm:mt-8 bg-black dark:bg-white text-white dark:text-black border-2 border-black dark:border-white hover:bg-transparent hover:text-black dark:hover:text-white transition-all duration-300 ease-in-out text-base px-6 py-4 h-auto"
-                onClick={() => router.push("/register")}
+                onClick={() => router.push("/signup")}
               >
                 Get Started 
                 <ArrowRight className="ml-2 h-5 w-5" />
