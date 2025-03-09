@@ -102,10 +102,11 @@ export default function Home() {
 
   useEffect(() => {
     const fetchCounts = async () => {
-      // Use 'users' matching the table used in sign up and sign in
+      // Query all user records (across all users)
       const { data: users, error: userError, count: userCount } = await supabase
         .from('users')
         .select('*', { count: 'exact' })
+      // Query all conditions from all users
       const { data: events, error: eventError, count: eventCount } = await supabase
         .from('conditions')
         .select('*', { count: 'exact' })
