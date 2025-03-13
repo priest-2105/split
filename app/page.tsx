@@ -243,7 +243,7 @@ export default function Home() {
                 <div className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2">
                   {eventCount.toLocaleString()}
                 </div>
-                <p className="text-gray-700 dark:text-gray-400 text-sm sm:text-base">Events/Conditions Created</p>
+                <p className="text-gray-700 dark:text-gray-400 text-sm sm:text-base">Conditions Created</p>
               </motion.div>
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
