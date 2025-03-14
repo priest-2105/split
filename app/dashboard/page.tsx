@@ -1,6 +1,6 @@
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import Calendar from "@/components/Calendar"
-import SidePanel from "@/components/SidePanel"
+// import SidePanel from "@/components/SidePanel"
 
 export default function Dashboard() {
   return (
@@ -11,7 +11,7 @@ export default function Dashboard() {
           <Calendar />
         </div>
         <div className="w-full lg:w-80">
-          <SidePanel />
+          {/* <SidePanel /> */}
         </div>
       </div>
     </DashboardLayout>
